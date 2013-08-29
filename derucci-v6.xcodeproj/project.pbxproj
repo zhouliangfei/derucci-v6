@@ -114,6 +114,7 @@
 		04DE8AAA17BDE46200124E84 /* VirtualViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04DE8AA917BDE46200124E84 /* VirtualViewController.m */; };
 		04DE8AB017BDE49300124E84 /* FeaturesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04DE8AAD17BDE49300124E84 /* FeaturesViewController.m */; };
 		04DE8AB117BDE49300124E84 /* FeatureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04DE8AAF17BDE49300124E84 /* FeatureViewController.m */; };
+		04E7FD0C17CB51DC00282F65 /* ExtendsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 04E7FD0B17CB51DC00282F65 /* ExtendsView.m */; };
 		04E91C3E17BA1ADA0025A7AD /* UIPerspectView.m in Sources */ = {isa = PBXBuildFile; fileRef = 04E91C3D17BA1ADA0025A7AD /* UIPerspectView.m */; };
 		04FCBC6317C1B0DC001B72B5 /* RoomsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04FCBC6217C1B0DC001B72B5 /* RoomsViewController.m */; };
 		04FCBC6717C1BB87001B72B5 /* RoomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04FCBC6617C1BB87001B72B5 /* RoomViewController.m */; };
@@ -291,6 +292,8 @@
 		04DE8AAD17BDE49300124E84 /* FeaturesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeaturesViewController.m; sourceTree = "<group>"; };
 		04DE8AAE17BDE49300124E84 /* FeatureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeatureViewController.h; sourceTree = "<group>"; };
 		04DE8AAF17BDE49300124E84 /* FeatureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeatureViewController.m; sourceTree = "<group>"; };
+		04E7FD0A17CB51DC00282F65 /* ExtendsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtendsView.h; sourceTree = "<group>"; };
+		04E7FD0B17CB51DC00282F65 /* ExtendsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExtendsView.m; sourceTree = "<group>"; };
 		04E91C3C17BA1AD90025A7AD /* UIPerspectView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIPerspectView.h; sourceTree = "<group>"; };
 		04E91C3D17BA1ADA0025A7AD /* UIPerspectView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIPerspectView.m; sourceTree = "<group>"; };
 		04FCBC6117C1B0DC001B72B5 /* RoomsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoomsViewController.h; sourceTree = "<group>"; };
@@ -430,6 +433,8 @@
 				04FCBC6617C1BB87001B72B5 /* RoomViewController.m */,
 				04CF95AC17C49B6100126D86 /* DIYViewController.h */,
 				04CF95AD17C49B6100126D86 /* DIYViewController.m */,
+				04E7FD0A17CB51DC00282F65 /* ExtendsView.h */,
+				04E7FD0B17CB51DC00282F65 /* ExtendsView.m */,
 			);
 			path = class;
 			sourceTree = "<group>";
@@ -775,6 +780,7 @@
 				04CF969E17C4AD5300126D86 /* FtpExtends.m in Sources */,
 				04CF969F17C4AD5300126D86 /* UpData.m in Sources */,
 				04CF96A117C4AD5300126D86 /* UpdataCell.m in Sources */,
+				04E7FD0C17CB51DC00282F65 /* ExtendsView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -91,20 +91,6 @@
     }
     return UtilsDocument;
 }
-+(UIWindow*)extendsWindow{
-    static UIWindow *UtilsExtendsWindow;
-    @synchronized(self){
-        if (nil == UtilsExtendsWindow){
-            UIScreen *extendsScreen = [[UIScreen screens] lastObject];
-            if (extendsScreen != [UIScreen mainScreen]) {
-                UtilsExtendsWindow = [[UIWindow alloc] initWithFrame:[extendsScreen bounds]];
-                [UtilsExtendsWindow setScreen:extendsScreen];
-                [UtilsExtendsWindow makeKeyAndVisible];
-            }
-        }
-    }
-    return UtilsExtendsWindow;
-}
 +(NSString*)pathForDocument:(NSString*)path
 {
     return [[Utils document] stringByAppendingPathComponent:path];
@@ -337,5 +323,24 @@
         return [Utils popViewController:topController animated:curController.modalTransitionStyle];
     }
     return nil;
+}
+
+/*
+ audioPlayer
+ */
++(AVAudioPlayer*)audioWithPath:(NSString*)path{
+    static AVAudioPlayer *UtilsAudioPlayer;
+    @synchronized(self){
+        if (UtilsAudioPlayer && path && ![UtilsAudioPlayer.url.path isEqualToString:path]) {
+            [UtilsAudioPlayer release],UtilsAudioPlayer=nil;
+        }
+        if (nil==UtilsAudioPlayer) {
+            NSURL *url = [NSURL fileURLWithPath:path];
+            if (url){
+                UtilsAudioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
+            }
+        }
+    }
+    return UtilsAudioPlayer;
 }
 @end

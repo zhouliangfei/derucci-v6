@@ -49,6 +49,8 @@
 @end
 //
 @interface GUIExt : GUI
++(UIImageView*)extendsView;
+//
 +(void)tweenTo:(float)value object:(id)object;
 //
 +(id)LeftAttributeWithFrame:(CGRect)frame parent:(UIView*)parent title:(NSString*)title subTitle:(NSString*)subTitle target:(id)target event:(SEL)event;

@@ -8,8 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "UIFlipView.h"
-#import "UIPerspectView.h"
 
-@interface ProductsViewController : UIViewController<UIFlipViewDataSource,UIFlipViewDelegate,UIPerspectViewDelegate,UIPerspectViewDataSource>
+@interface ProductsViewController : UIViewController<UIFlipViewDataSource,UIFlipViewDelegate>
 
 @end

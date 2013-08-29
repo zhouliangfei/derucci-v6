@@ -1,0 +1,16 @@
+[
+{"name": "product_seaBase.png", "x": 649,"y":  53,"w": 267,"h":  45},
+{"name": "product_inBase.png", "x": 655,"y":  59,"w": 222,"h":  33},
+{"name": "product_icon5.png", "x": 876,"y":  59,"w":  34,"h":  33},
+{"name": "product_btnActBg.png", "x": 827,"y":   1,"w":  88,"h":  52},
+{"name": "product_selBase.png", "x": 738,"y":  53,"w": 178,"h": 119},
+{"name": "product_00001.png", "x": 750,"y":  67,"w": 147,"h":  89},
+{"name": "product_selAct.png", "x": 750,"y":  67,"w":  20,"h":  21},
+{"name": "product_selNor.png", "x": 834,"y": 136,"w":  21,"h":  20},
+{"name": "product_icon4.png", "x": 752,"y":  32,"w":  14,"h":  14},
+{"name": "product_icon3.png", "x": 842,"y":  33,"w":  13,"h":  12},
+{"name": "product_icon2.png", "x": 663,"y":  30,"w":  17,"h":  17},
+{"name": "product_icon1.png", "x": 660,"y":  31,"w":  23,"h":  16},
+{"name": "product_000000.png", "x": 683,"y":  34,"w": 220,"h":  11},
+{"name": "product_line.png", "x": 649,"y":  24,"w": 267,"h":  29},
+]product

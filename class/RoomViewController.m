@@ -258,6 +258,10 @@
 -(void)viewDidAppear:(BOOL)animated{
     [NavigateView shareInstanceInView:self.view];
     [self initData];
+    //
+    if ([GUIExt extendsView]) {
+        [GUIExt extendsView].animationImages=nil;
+    }
 }
 //初始化数据
 -(void)initData{

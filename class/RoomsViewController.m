@@ -60,6 +60,10 @@
 -(void)viewDidAppear:(BOOL)animated{
     NavigateView *nav = [NavigateView shareInstanceInView:self.view];
     [nav.background setHidden:YES];
+    //
+    if ([GUIExt extendsView]) {
+        [GUIExt extendsView].animationImages=[Access ExtendsImages];
+    }
 }
 
 //

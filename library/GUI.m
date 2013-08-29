@@ -94,6 +94,21 @@
  */
 
 @implementation GUI
++(UIWindow*)extendsWindow{
+    static UIWindow *ExtendsWindowGUI;
+    @synchronized(self){
+        if (nil == ExtendsWindowGUI){
+            UIScreen *extendsScreen = [[UIScreen screens] lastObject];
+            if (extendsScreen != [UIScreen mainScreen]) {
+                ExtendsWindowGUI = [[UIWindow alloc] initWithFrame:[extendsScreen bounds]];
+                [ExtendsWindowGUI setScreen:extendsScreen];
+                [ExtendsWindowGUI makeKeyAndVisible];
+            }
+        }
+    }
+    return ExtendsWindowGUI;
+}
+
 +(id)viewWithFrame:(CGRect)frame parent:(UIView*)parent{
     UIView *temp = [UIView viewWithFrame:frame];
     [parent addSubview:temp];

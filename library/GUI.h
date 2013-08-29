@@ -52,6 +52,8 @@
  gui
  */
 @interface GUI : NSObject
++(UIWindow*)extendsWindow;
+
 +(id)viewWithFrame:(CGRect)frame parent:(UIView*)parent;
 
 +(id)tableViewWithFrame:(CGRect)frame parent:(UIView*)parent;

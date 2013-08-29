@@ -43,6 +43,7 @@
     return self;
 }
 -(void)setImages:(NSArray*)images{
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
     [iconImage removeAllObjects];
     if (images) {
         for (id val in images) {
@@ -57,10 +58,12 @@
 -(void)nextImage:(id)sender{
     [iconView setImage:[iconImage objectAtIndex:iconIndex]];
     [self.layer addAnimation:[CATransition animation] forKey:nil];
-    [self performSelector:@selector(nextImage:) withObject:nil afterDelay:5];
-    //
-    iconIndex++;
-    iconIndex %= iconImage.count;
+    if (iconImage.count > 1) {
+        [self performSelector:@selector(nextImage:) withObject:nil afterDelay:5];
+        
+        iconIndex++;
+        iconIndex%=iconImage.count;
+    }
 }
 -(void)setActive:(BOOL)active{
     [UIView beginAnimations:nil context:nil];
@@ -153,11 +156,6 @@
             [cell.backgroundView setBackgroundColor:[UIColor colorWithHex:curCol]];
         }];
     }
-    //
-    if ([Utils extendsWindow]) {
-        UIView *view = [GUI imageWithFrame:CGRectMake(0, 0, 1024, 768) parent:self.view source:@"source/background.png"];
-		[[Utils extendsWindow] addSubview:view];
-    }
 }
 
 - (void)viewDidUnload
@@ -172,6 +170,12 @@
 }
 
 -(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    
+    if ([GUIExt extendsView]) {
+        [GUIExt extendsView].animationImages=[Access ExtendsImages];
+    }
+    
     [NavigateController shareInstanceInView:self.view];
     [self performSelector:@selector(resetCurrentCell:) withObject:nil afterDelay:0.4];
 }
@@ -220,6 +224,28 @@
     }];
 }
 -(UIImage*)blurWithImage:(UIImage*)image {
+    float weight[5] = {0.1270270270, 0.1945945946, 0.1216216216, 0.0540540541, 0.0162162162};
+    // Blur horizontally
+    UIGraphicsBeginImageContextWithOptions(image.size, NO, image.scale);
+    [image drawInRect:CGRectMake(0, 0, image.size.width, image.size.height) blendMode:kCGBlendModeNormal alpha:weight[0]];
+    for (int x = 1; x < 5; ++x) {
+        [image drawInRect:CGRectMake(x, 0, image.size.width, image.size.height) blendMode:kCGBlendModeNormal alpha:weight[x]];
+        [image drawInRect:CGRectMake(-x, 0, image.size.width, image.size.height) blendMode:kCGBlendModeNormal alpha:weight[x]];
+    }
+    UIImage *horizBlurredImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    // Blur vertically
+    UIGraphicsBeginImageContextWithOptions(image.size, NO, image.scale);
+    [horizBlurredImage drawInRect:CGRectMake(0, 0, image.size.width, image.size.height) blendMode:kCGBlendModeNormal alpha:weight[0]];
+    for (int y = 1; y < 5; ++y) {
+        [horizBlurredImage drawInRect:CGRectMake(0, y, image.size.width, image.size.height) blendMode:kCGBlendModeNormal alpha:weight[y]];
+        [horizBlurredImage drawInRect:CGRectMake(0, -y, image.size.width, image.size.height) blendMode:kCGBlendModeNormal alpha:weight[y]];
+    }
+    UIImage *blurredImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    //
+    return blurredImage;
+    /*
     float weight[5] = {0.2270270270, 0.1945945946, 0.1216216216, 0.0540540541, 0.0162162162};
     // Blur horizontally
     UIGraphicsBeginImageContext(image.size);
@@ -240,6 +266,6 @@
     UIImage *blurredImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     //
-    return blurredImage;
+    return blurredImage;*/
 }
 @end

@@ -338,6 +338,10 @@
 
 -(void)viewDidAppear:(BOOL)animated{
     [NavigateView shareInstanceInView:self.view];
+    //
+    if ([GUIExt extendsView]) {
+        [GUIExt extendsView].animationImages=[Access ExtendsImages];
+    }
 }
 
 //

@@ -7,7 +7,7 @@
 //
 
 #import "GUIExt.h"
-
+#import "ExtendsView.h"
 //
 @implementation GUIFlipCell
 @dynamic image;
@@ -190,12 +190,25 @@
 @end
 //
 @implementation GUIExt
+//
++(UIImageView*)extendsView{
+    static ExtendsView *ExtendsViewGUIExt;
+    @synchronized(self){
+        if (nil == ExtendsViewGUIExt){
+            if ([GUI extendsWindow]) {
+                ExtendsViewGUIExt = [[ExtendsView alloc] initWithFrame:[GUI extendsWindow].bounds];
+                [[GUI extendsWindow] addSubview:ExtendsViewGUIExt];
+                [ExtendsViewGUIExt release];
+            }
+        }
+    }
+    return ExtendsViewGUIExt;
+}
 //动画
 static NSTimer *tweenAnimation;
 static UIView *tweenObject;
 static float tweenVelocity;
 static float tweenValue;
-
 +(void)enterFrame:(NSTimer *)timer{
     CGRect frame = tweenObject.frame;
     

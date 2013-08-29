@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface Access : NSObject
++(id)ExtendsImages;
 //登录
 +(id)loginWithUserName:(NSString*)userName passWord:(NSString*)passWord;
 //home
@@ -18,7 +19,7 @@
 +(id)getBrandstoryPictureWithId:(NSNumber*)value;
 //产品中心
 +(id)getProductTypesWithParent:(NSNumber*)value;
-+(id)getProductsWithType:(NSNumber*)value;
++(id)getProductsWithType:(NSNumber*)value room:(NSString*)room key:(NSString*)key;
 +(id)getProductOverviewWithId:(NSNumber*)value;
 +(id)getProductColorsWithId:(NSNumber*)value;
 +(id)getProductPhotoGalleryWithId:(NSNumber*)value;

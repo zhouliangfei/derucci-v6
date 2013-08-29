@@ -6,6 +6,7 @@
 //  Copyright (c) 2013年 __MyCompanyName__. All rights reserved.
 //
 #import "GUIExt.h"
+#import "Access.h"
 #import "NavigateView.h"
 #import "FeatureViewController.h"
 #import "FeaturesViewController.h"
@@ -27,9 +28,9 @@
     [GUI imageWithFrame:CGRectMake(0, 0, 1024, 768) parent:self.view source:@"source/background.png"];
     
     NSArray *frame = [NSArray arrayWithObjects:
-                      [NSValue valueWithCGRect:CGRectMake(42 , 126, 306, 517)],
-                      [NSValue valueWithCGRect:CGRectMake(356, 181, 306, 518)],
-                      [NSValue valueWithCGRect:CGRectMake(669 , 158, 307, 517)],nil];
+                      [NSValue valueWithCGRect:CGRectMake(27 , 121, 316, 527)],
+                      [NSValue valueWithCGRect:CGRectMake(351, 176, 316, 528)],
+                      [NSValue valueWithCGRect:CGRectMake(674 , 153, 317, 527)],nil];
     for (int i=0; i<frame.count; i++) {
         NSString *path = [NSString stringWithFormat:@"source/feature_icon%d.png",i+1];
         CGRect curFrame = [[frame objectAtIndex:i] CGRectValue];
@@ -65,6 +66,10 @@
 -(void)viewDidAppear:(BOOL)animated{
     NavigateView *nav = [NavigateView shareInstanceInView:self.view];
     [nav.background setHidden:YES];
+    //
+    if ([GUIExt extendsView]) {
+        [GUIExt extendsView].animationImages=[Access ExtendsImages];
+    }
 }
 
 //

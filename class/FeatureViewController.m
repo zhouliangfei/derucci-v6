@@ -6,6 +6,7 @@
 //  Copyright (c) 2013年 __MyCompanyName__. All rights reserved.
 //
 #import "GUIExt.h"
+#import "Access.h"
 #import "NavigateView.h"
 #import "FeatureViewController.h"
 
@@ -170,6 +171,10 @@
 
 -(void)viewDidAppear:(BOOL)animated{
     [NavigateView shareInstanceInView:self.view];
+    //
+    if ([GUIExt extendsView]) {
+        [GUIExt extendsView].animationImages=[Access ExtendsImages];
+    }
 }
 //
 -(void)setSource:(NSDictionary *)source{

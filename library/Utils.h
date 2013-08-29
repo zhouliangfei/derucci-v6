@@ -7,6 +7,7 @@
 //
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
+#import <AVFoundation/AVFoundation.h>
 
 //NSNull
 @interface NSNull (NSNullUtils)
@@ -37,10 +38,9 @@ typedef enum {
     UITransitionStyleCoverVertical,
     UITransitionStyleCoverHorizontal
 } UITransitionStyle;
-//..................................................
+//*****************************************************
 @interface Utils : NSObject
 +(NSString*)document;
-+(UIWindow*)extendsWindow;
 +(NSString*)pathForDocument:(NSString*)path;
 +(NSString*)pathForResource:(NSString*)path;
 
@@ -58,4 +58,6 @@ typedef enum {
 +(UIViewController*)gotoWithName:(NSString*)name animated:(UITransitionStyle)animated;
 +(UIViewController*)openWithName:(NSString*)name animated:(UITransitionStyle)animated;
 +(UIViewController*)back;
+
++(AVAudioPlayer*)audioWithPath:(NSString*)path;
 @end

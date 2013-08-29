@@ -6,9 +6,10 @@
 //  Copyright (c) 2013年 __MyCompanyName__. All rights reserved.
 //
 #import "GUIExt.h"
+#import "Access.h"
 #import "NavigateView.h"
 #import "DIYViewController.h"
-
+ 
 @interface DIYStepView : UIButton{
     UILabel *tagView;
 }
@@ -194,6 +195,10 @@
 
 -(void)viewDidAppear:(BOOL)animated{
     [NavigateView shareInstanceInView:self.view];
+    //
+    if ([GUIExt extendsView]) {
+        [GUIExt extendsView].animationImages=[Access ExtendsImages];
+    }
 }
 //
 -(void)showTouch:(UIButton*)sender{

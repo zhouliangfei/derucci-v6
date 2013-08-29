@@ -6,6 +6,7 @@
 //  Copyright (c) 2013年 __MyCompanyName__. All rights reserved.
 //
 #import "GUIExt.h"
+#import "Access.h"
 #import "NavigateView.h"
 #import "VirtualViewController.h"
 
@@ -83,6 +84,10 @@
 -(void)viewDidAppear:(BOOL)animated{
     NavigateView *nav = [NavigateView shareInstanceInView:self.view];
     [nav.background setHidden:YES];
+    //
+    if ([GUIExt extendsView]) {
+        [GUIExt extendsView].animationImages=[Access ExtendsImages];
+    }
 }
 
 //

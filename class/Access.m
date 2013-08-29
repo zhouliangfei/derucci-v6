@@ -11,6 +11,21 @@
 #import "Access.h"
 
 @implementation Access
++(id)ExtendsImages{
+    static NSMutableArray *ExtendsImagesAccess;
+    @synchronized(self){
+        if (nil==ExtendsImagesAccess) {
+            ExtendsImagesAccess = [[NSMutableArray alloc] init];
+            //
+            NSString *sql = [NSString stringWithFormat:@"SELECT photo FROM brandstorypicture WHERE deleted=0 ORDER BY dispIndex"];
+            NSArray *tmp = [[SQL shareInstance] fetch:sql];
+            for (id dic in tmp) {
+                [ExtendsImagesAccess addObject:[dic objectForKey:@"photo"]];
+            }
+        }
+    }
+    return ExtendsImagesAccess;
+}
 //登录
 +(id)loginWithUserName:(NSString*)userName passWord:(NSString*)passWord{
     NSString *sql = [NSString stringWithFormat:@"SELECT * FROM users WHERE username='%@' AND password LIKE '%%%@%%' LIMIT 0,1",userName,[Utils md5:passWord]];
@@ -91,10 +106,19 @@
     }
     return [[SQL shareInstance] fetch:sql];
 }
-+(id)getProductsWithType:(NSNumber*)value{
-    NSString *sql = @"SELECT a.*,b.bigPhoto FROM product a,productpicture b WHERE b.deleted=0 AND b.isDefault=1 AND b.product_id=a.id AND a.deleted=0";
++(id)getProductsWithType:(NSNumber*)value room:(NSString*)room key:(NSString*)key{
+    NSString *sql = @"SELECT a.*,b.bigPhoto,f.roomTypeId,f.roomTypeName FROM product a,productpicture b "\
+    "LEFT JOIN (SELECT e.id,c.id roomTypeId,c.name roomTypeName FROM roomtype c,room d,roommapwallcarpet e "\
+    "WHERE e.deleted=0 AND e.room_id=d.id AND d.deleted=0 AND d.roomType_id=c.id AND c.deleted=0) f ON a.roomMapWallCarpet_id=f.id "\
+    "WHERE b.deleted=0 AND b.isDefault=1 AND b.product_id=a.id AND a.deleted=0";
     if (value) {
         sql = [sql stringByAppendingFormat:@" AND a.productType_id=%@",value];
+    }
+    if (room) {
+        sql = [sql stringByAppendingFormat:@" AND f.roomTypeId IN(%@)",room];
+    }
+    if (key) {
+        sql = [sql stringByAppendingFormat:@" AND (a.name LIKE '%%%@%%' OR a.model LIKE '%%%@%%' OR a.description LIKE '%%%@%%')",key,key,key];
     }
     return [[SQL shareInstance] fetch:sql];
 }

@@ -141,7 +141,7 @@
     inputView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)];
     [self.view addSubview:inputView];
     //
-    [GUI buttonWithFrame:CGRectMake(982, 729, 25, 26) parent:inputView normal:@"source/login_icon_i.png" target:self event:nil];
+    [GUI buttonWithFrame:CGRectMake(982, 729, 25, 25) parent:inputView normal:@"source/login_icon_i.png" target:self event:nil];
     //
     UILockView *lock = [[UILockView alloc] initWithFrame:CGRectMake(147, 558, 147*2, 147)];
     [lock setDelegate:self];

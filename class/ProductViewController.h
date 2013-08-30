@@ -12,4 +12,5 @@
 @interface ProductViewController : UIViewController<UIFlipViewDataSource,UIFlipViewDelegate>
 @property(nonatomic,retain) NSArray *source;
 @property(nonatomic,assign) int currentIndex;
+@property(nonatomic,assign) int style;
 @end

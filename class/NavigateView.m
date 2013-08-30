@@ -26,12 +26,12 @@
         background = [GUI imageWithFrame:CGRectMake(13, 0, 111, 102) parent:self source:@"source/top_back.png"];
         
         children = [[NSMutableArray alloc] init];
-        [children addObject:[GUI buttonWithFrame:CGRectMake(0 ,  9, 31, 31) parent:self normal:@"source/top_icon_diy.png" target:self event:@selector(btnTouch:)]];
-        [children addObject:[GUI buttonWithFrame:CGRectMake(5 , 48, 32, 31) parent:self normal:@"source/top_icon_fav.png" target:self event:@selector(btnTouch:)]];
-        [children addObject:[GUI buttonWithFrame:CGRectMake(37, 78, 31, 31) parent:self normal:@"source/top_icon_use.png" target:self event:@selector(btnTouch:)]];
-        [children addObject:[GUI buttonWithFrame:CGRectMake(81, 80, 31, 32) parent:self normal:@"source/top_icon_sys.png" target:self event:@selector(sysTouch:)]];
+        [children addObject:[GUI buttonWithFrame:CGRectMake(0 ,  9, 31, 30) parent:self normal:@"source/top_icon_diy.png" target:self event:@selector(btnTouch:)]];
+        [children addObject:[GUI buttonWithFrame:CGRectMake(9 , 49, 30, 30) parent:self normal:@"source/top_icon_fav.png" target:self event:@selector(btnTouch:)]];
+        [children addObject:[GUI buttonWithFrame:CGRectMake(38, 78, 30, 31) parent:self normal:@"source/top_icon_use.png" target:self event:@selector(btnTouch:)]];
+        [children addObject:[GUI buttonWithFrame:CGRectMake(82, 81, 30, 30) parent:self normal:@"source/top_icon_sys.png" target:self event:@selector(sysTouch:)]];
         
-        [GUI buttonWithFrame:CGRectMake(62, 22, 32, 32) parent:self normal:@"source/top_icon_o.png" active:@"source/top_icon_x.png" target:self event:@selector(switchTouch:)];
+        [GUI buttonWithFrame:CGRectMake(63, 22, 30, 30) parent:self normal:@"source/top_icon_o.png" active:@"source/top_icon_x.png" target:self event:@selector(switchTouch:)];
         [self hiddenChild:NO];
     }
     return self;
@@ -138,8 +138,8 @@
         [background addGestureRecognizer:swipeGestureDown];
         [swipeGestureDown release];
         //
-        [GUI imageWithFrame:CGRectMake(27, 14, 111, 43) parent:self source:@"source/top_logo.png"];
-        [GUI buttonWithFrame:CGRectMake(162, 22, 31, 32) parent:self normal:@"source/top_icon_home.png" target:self event:@selector(homeTouch:)];
+        [GUI imageWithFrame:CGRectMake(27, 14, 112, 43) parent:self source:@"source/top_logo.png"];
+        [GUI buttonWithFrame:CGRectMake(162, 22, 31, 30) parent:self normal:@"source/top_icon_home.png" target:self event:@selector(homeTouch:)];
     }
     return self;
 }

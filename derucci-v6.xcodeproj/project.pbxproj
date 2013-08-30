@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0442948F17B87A9700B2E5AD /* ProductsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0442948E17B87A9700B2E5AD /* ProductsViewController.m */; };
+		046B7BDA17CF015A009490CE /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 046B7BD917CF015A009490CE /* AVFoundation.framework */; };
+		046B7BEA17CF3A76009490CE /* DissectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 046B7BE917CF3A76009490CE /* DissectionView.m */; };
 		0483263617AF917500EE1A7B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0483263517AF917500EE1A7B /* UIKit.framework */; };
 		0483263817AF917500EE1A7B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0483263717AF917500EE1A7B /* Foundation.framework */; };
 		0483263A17AF917500EE1A7B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0483263917AF917500EE1A7B /* CoreGraphics.framework */; };
@@ -123,6 +125,9 @@
 /* Begin PBXFileReference section */
 		0442948D17B87A9700B2E5AD /* ProductsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductsViewController.h; sourceTree = "<group>"; };
 		0442948E17B87A9700B2E5AD /* ProductsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductsViewController.m; sourceTree = "<group>"; };
+		046B7BD917CF015A009490CE /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		046B7BE817CF3A75009490CE /* DissectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DissectionView.h; sourceTree = "<group>"; };
+		046B7BE917CF3A76009490CE /* DissectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DissectionView.m; sourceTree = "<group>"; };
 		0483263117AF917500EE1A7B /* derucci-v6.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "derucci-v6.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0483263517AF917500EE1A7B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		0483263717AF917500EE1A7B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -307,6 +312,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				046B7BDA17CF015A009490CE /* AVFoundation.framework in Frameworks */,
 				04CF96A817C4B8E400126D86 /* MediaPlayer.framework in Frameworks */,
 				04CA4EEF17C1DF2700CAD7BB /* CoreText.framework in Frameworks */,
 				04CE7E4217BCD2520053C86E /* OpenGLES.framework in Frameworks */,
@@ -385,6 +391,7 @@
 		0483265617AF91E200EE1A7B /* userFramewords */ = {
 			isa = PBXGroup;
 			children = (
+				046B7BD917CF015A009490CE /* AVFoundation.framework */,
 				04CF96A717C4B8E300126D86 /* MediaPlayer.framework */,
 				04CA4EEE17C1DF2700CAD7BB /* CoreText.framework */,
 				04CE7E4117BCD2510053C86E /* OpenGLES.framework */,
@@ -435,6 +442,8 @@
 				04CF95AD17C49B6100126D86 /* DIYViewController.m */,
 				04E7FD0A17CB51DC00282F65 /* ExtendsView.h */,
 				04E7FD0B17CB51DC00282F65 /* ExtendsView.m */,
+				046B7BE817CF3A75009490CE /* DissectionView.h */,
+				046B7BE917CF3A76009490CE /* DissectionView.m */,
 			);
 			path = class;
 			sourceTree = "<group>";
@@ -781,6 +790,7 @@
 				04CF969F17C4AD5300126D86 /* UpData.m in Sources */,
 				04CF96A117C4AD5300126D86 /* UpdataCell.m in Sources */,
 				04E7FD0C17CB51DC00282F65 /* ExtendsView.m in Sources */,
+				046B7BEA17CF3A76009490CE /* DissectionView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

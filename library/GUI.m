@@ -109,6 +109,41 @@
     return ExtendsWindowGUI;
 }
 
++(id)loadingForView:(UIView*)view visible:(BOOL)visible{
+    static UIActivityIndicatorView *loadingViewGUI;
+    @synchronized(self){
+        if (nil == loadingViewGUI){
+            loadingViewGUI = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+            [loadingViewGUI setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5]];
+            [loadingViewGUI setContentMode:UIViewContentModeCenter];
+            [loadingViewGUI setFrame:CGRectMake(0, 0, 120, 120)];
+            [loadingViewGUI setUserInteractionEnabled:NO];
+            [loadingViewGUI.layer setMasksToBounds:YES];
+            [loadingViewGUI.layer setCornerRadius:6];
+            [loadingViewGUI setAlpha:0];
+        }
+        if (visible) {
+            [UIView beginAnimations:nil context:nil];
+            [loadingViewGUI setAlpha:1];
+            [UIView commitAnimations];
+            [loadingViewGUI startAnimating];
+            [view setUserInteractionEnabled:NO];
+            //
+            if (loadingViewGUI.superview!=view) {
+                [loadingViewGUI setCenter:view.center];
+                [view addSubview:loadingViewGUI];
+            }
+        }else {
+            [UIView beginAnimations:nil context:nil];
+            [loadingViewGUI setAlpha:0];
+            [UIView commitAnimations];
+            [loadingViewGUI stopAnimating];
+            [view setUserInteractionEnabled:YES];
+        }
+    }
+    return loadingViewGUI;
+}
+
 +(id)viewWithFrame:(CGRect)frame parent:(UIView*)parent{
     UIView *temp = [UIView viewWithFrame:frame];
     [parent addSubview:temp];

@@ -121,7 +121,7 @@
     //
     cellFrame = [[NSArray arrayWithObjects:
                   [NSValue valueWithCGRect:CGRectMake(25 , 153, 484, 240)],
-                  [NSValue valueWithCGRect:CGRectMake(513, 153, 240, 240)],
+                  [NSValue valueWithCGRect:CGRectMake(513, 152, 240, 241)],
                   [NSValue valueWithCGRect:CGRectMake(25 , 396, 240, 241)],
                   [NSValue valueWithCGRect:CGRectMake(269, 396, 240, 241)],
                   [NSValue valueWithCGRect:CGRectMake(513, 396, 240, 241)],
@@ -192,6 +192,8 @@
 
 //.............................................................
 -(void)cellTouch:(HomeViewCell*)sender{
+    if (sender.tag==6) return;
+    //
     currentCell = sender;
     [currentCell setActive:YES];
     [self.view addSubview:currentCell];
@@ -245,27 +247,5 @@
     UIGraphicsEndImageContext();
     //
     return blurredImage;
-    /*
-    float weight[5] = {0.2270270270, 0.1945945946, 0.1216216216, 0.0540540541, 0.0162162162};
-    // Blur horizontally
-    UIGraphicsBeginImageContext(image.size);
-    [image drawInRect:CGRectMake(0, 0, image.size.width, image.size.height) blendMode:kCGBlendModePlusLighter alpha:weight[0]];
-    for (int x = 1; x < 5; ++x) {
-        [image drawInRect:CGRectMake(x, 0, image.size.width, image.size.height) blendMode:kCGBlendModePlusLighter alpha:weight[x]];
-        [image drawInRect:CGRectMake(-x, 0, image.size.width, image.size.height) blendMode:kCGBlendModePlusLighter alpha:weight[x]];
-    }
-    UIImage *horizBlurredImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    // Blur vertically
-    UIGraphicsBeginImageContext(image.size);
-    [horizBlurredImage drawInRect:CGRectMake(0, 0, image.size.width, image.size.height) blendMode:kCGBlendModePlusLighter alpha:weight[0]];
-    for (int y = 1; y < 5; ++y) {
-        [horizBlurredImage drawInRect:CGRectMake(0, y, image.size.width, image.size.height) blendMode:kCGBlendModePlusLighter alpha:weight[y]];
-        [horizBlurredImage drawInRect:CGRectMake(0, -y, image.size.width, image.size.height) blendMode:kCGBlendModePlusLighter alpha:weight[y]];
-    }
-    UIImage *blurredImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    //
-    return blurredImage;*/
 }
 @end

@@ -276,8 +276,9 @@
 @end
 
 @implementation ProductViewController
-@synthesize source;
 @synthesize currentIndex;
+@synthesize source;
+@dynamic style;
 
 - (void)viewDidLoad
 {
@@ -292,27 +293,7 @@
     [bookView setDelegate:self];
     [self.view addSubview:bookView];
     //798
-    rightView = [GUI viewWithFrame:CGRectMake(965, 74, 226, 694) parent:self.view];
-    [GUI imageWithFrame:CGRectMake(59, 0, 226, 694) parent:rightView source:@"source/product_rigBase.png"];
-    [GUI buttonWithFrame:CGRectMake(0, 34, 27, 28) parent:rightView normal:@"source/btn_open.png" target:self event:@selector(openTouch:)];
-    [GUI buttonWithFrame:CGRectMake(96, 618, 45, 49) parent:rightView normal:@"source/product_icon_room.png" target:self event:@selector(roomTouch:)];
-    [GUI buttonWithFrame:CGRectMake(210, 617, 38, 50) parent:rightView normal:@"source/product_icon_fav.png" target:self event:@selector(favTouch:)];
-    
-    [GUIExt LeftAttributeWithFrame:CGRectMake(59, 352, 226, 79) parent:rightView title:@"OVERVIEW" subTitle:@"产品概述" target:self event:@selector(overviewTouch:)];
-    [GUIExt LeftAttributeWithFrame:CGRectMake(59, 432, 226, 79) parent:rightView title:@"COLORS" subTitle:@"颜色选择" target:self event:@selector(colorTouch:)];
-    [GUIExt LeftAttributeWithFrame:CGRectMake(59, 512, 226, 79) parent:rightView title:@"PHOTO GALLERY" subTitle:@"产品相册" target:self event:@selector(photoTouch:)];
-
-    modelView=[GUI lableWithFrame:CGRectMake(83, 25, 178, 42) parent:rightView text:@"" font:[UIFont fontWithName:@"HelveticaNeueLTStd-ThCn" size:33] color:[UIColor whiteColor] align:0];
-    nameView=[GUI lableWithFrame:CGRectMake(83, 67, 178, 16) parent:rightView text:@"" font:[UIFont systemFontOfSize:16] color:[UIColor whiteColor] align:0];
-    descriptionView=[GUI textViewWithFrame:CGRectMake(79, 119, 187, 125) parent:rightView text:@"" font:[UIFont systemFontOfSize:12] color:[UIColor colorWithHex:0x52261dff] align:0];
-    sizeView=[GUI textViewWithFrame:CGRectMake(79, 271, 181, 68) parent:rightView text:@"" font:[UIFont systemFontOfSize:12] color:[UIColor colorWithHex:0x52261dff] align:0];
-    //线
-    [GUI imageWithFrame:CGRectMake(59, 104, 226, 1) parent:rightView source:@"source/rline.png"];
-    [GUI imageWithFrame:CGRectMake(59, 259, 226, 1) parent:rightView source:@"source/rline.png"];
-    [GUI imageWithFrame:CGRectMake(59, 352, 226, 1) parent:rightView source:@"source/rline.png"];
-    [GUI imageWithFrame:CGRectMake(59, 432, 226, 1) parent:rightView source:@"source/line.png"];
-    [GUI imageWithFrame:CGRectMake(59, 512, 226, 1) parent:rightView source:@"source/line.png"];
-    [GUI imageWithFrame:CGRectMake(59, 591, 226, 1) parent:rightView source:@"source/line.png"];
+    [self setStyle:0];
 }
 
 - (void)viewDidUnload
@@ -344,6 +325,51 @@
     }
 }
 
+-(void)setStyle:(int)style{
+    if (rightView && rightView.superview) {
+        [rightView removeFromSuperview];
+    }
+    modelView = nil;
+    nameView = nil;
+    descriptionView = nil;
+    sizeView = nil;
+    if (style==0) {
+        rightView = [GUI viewWithFrame:CGRectMake(965, 74, 226, 694) parent:self.view];
+        [GUI imageWithFrame:CGRectMake(59, 0, 226, 694) parent:rightView source:@"source/product_rigBase.png"];
+        [GUI buttonWithFrame:CGRectMake(0, 34, 27, 28) parent:rightView normal:@"source/btn_open.png" target:self event:@selector(openTouch:)];
+        [GUI buttonWithFrame:CGRectMake(96, 625, 45, 49) parent:rightView normal:@"source/product_icon_room.png" target:self event:@selector(roomTouch:)];
+        [GUI buttonWithFrame:CGRectMake(210, 626, 38, 50) parent:rightView normal:@"source/product_icon_fav.png" target:self event:@selector(favTouch:)];
+        
+        [GUIExt LeftAttributeWithFrame:CGRectMake(59, 352, 226, 79) parent:rightView title:@"OVERVIEW" subTitle:@"产品概述" target:self event:@selector(overviewTouch:)];
+        [GUIExt LeftAttributeWithFrame:CGRectMake(59, 432, 226, 79) parent:rightView title:@"COLORS" subTitle:@"颜色选择" target:self event:@selector(colorTouch:)];
+        [GUIExt LeftAttributeWithFrame:CGRectMake(59, 512, 226, 79) parent:rightView title:@"PHOTO GALLERY" subTitle:@"产品相册" target:self event:@selector(photoTouch:)];
+        
+        modelView=[GUI lableWithFrame:CGRectMake(83, 25, 178, 42) parent:rightView text:nil font:[UIFont fontWithName:@"HelveticaNeueLTStd-ThCn" size:33] color:[UIColor whiteColor] align:0];
+        nameView=[GUI lableWithFrame:CGRectMake(83, 67, 178, 16) parent:rightView text:nil font:[UIFont systemFontOfSize:16] color:[UIColor whiteColor] align:0];
+        descriptionView=[GUI textViewWithFrame:CGRectMake(79, 119, 187, 125) parent:rightView text:nil font:[UIFont systemFontOfSize:12] color:[UIColor colorWithHex:0x52261dff] align:0];
+        sizeView=[GUI textViewWithFrame:CGRectMake(79, 271, 181, 68) parent:rightView text:nil font:[UIFont systemFontOfSize:12] color:[UIColor colorWithHex:0x52261dff] align:0];
+        //线
+        [GUI imageWithFrame:CGRectMake(172, 626, 1, 54) parent:rightView source:@"source/vline.png"];
+        [GUI imageWithFrame:CGRectMake(59, 104, 226, 1) parent:rightView source:@"source/rline.png"];
+        [GUI imageWithFrame:CGRectMake(59, 259, 226, 1) parent:rightView source:@"source/rline.png"];
+        [GUI imageWithFrame:CGRectMake(59, 352, 226, 1) parent:rightView source:@"source/rline.png"];
+        [GUI imageWithFrame:CGRectMake(59, 432, 226, 1) parent:rightView source:@"source/line.png"];
+        [GUI imageWithFrame:CGRectMake(59, 512, 226, 1) parent:rightView source:@"source/line.png"];
+        [GUI imageWithFrame:CGRectMake(59, 591, 226, 1) parent:rightView source:@"source/line.png"];
+    }else {
+        rightView = [GUI viewWithFrame:CGRectMake(965, 74, 226, 694) parent:self.view];
+        [GUI imageWithFrame:CGRectMake(59, 0, 226, 694) parent:rightView source:@"source/product_rigBase.png"];
+        [GUI buttonWithFrame:CGRectMake(0, 34, 27, 28) parent:rightView normal:@"source/btn_open.png" target:self event:@selector(openTouch:)];
+        [GUI buttonWithFrame:CGRectMake(153, 626, 38, 50) parent:rightView normal:@"source/product_icon_fav.png" target:self event:@selector(favTouch:)];
+        
+        modelView=[GUI lableWithFrame:CGRectMake(83, 25, 178, 42) parent:rightView text:nil font:[UIFont fontWithName:@"HelveticaNeueLTStd-ThCn" size:33] color:[UIColor whiteColor] align:0];
+        nameView=[GUI lableWithFrame:CGRectMake(83, 67, 178, 16) parent:rightView text:nil font:[UIFont systemFontOfSize:16] color:[UIColor whiteColor] align:0];
+        descriptionView=[GUI textViewWithFrame:CGRectMake(79, 119, 187, 458) parent:rightView text:nil font:[UIFont systemFontOfSize:12] color:[UIColor colorWithHex:0x52261dff] align:0];
+        //线
+        [GUI imageWithFrame:CGRectMake(59, 104, 226, 1) parent:rightView source:@"source/rline.png"];
+        [GUI imageWithFrame:CGRectMake(59, 591, 226, 1) parent:rightView source:@"source/line.png"];
+    }
+}
 //
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
     [self removePopView];
@@ -430,7 +456,9 @@
     if (value != page){
         if (value >=0) {
             page = value;
-            sizeView.text = [[source objectAtIndex:page] objectForKey:@"size"];
+            if (sizeView) {
+                sizeView.text = [[source objectAtIndex:page] objectForKey:@"size"];
+            }
             nameView.text = [[source objectAtIndex:page] objectForKey:@"name"];
             modelView.text = [[source objectAtIndex:page] objectForKey:@"model"];
             descriptionView.text = [[source objectAtIndex:page] objectForKey:@"description"];

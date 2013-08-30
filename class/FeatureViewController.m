@@ -130,8 +130,11 @@
 @end
 
 //...............................................................
+#import "DissectionView.h"
 @interface FeatureViewController (){
     UISequenceView *sequenceView;
+    //
+    DissectionView *dis;
 }
 @end
 
@@ -143,11 +146,15 @@
     [super viewDidLoad];
 	
     [GUI imageWithFrame:CGRectMake(0, 0, 1024, 768) parent:self.view source:@"source/background.png"];
-    [self.view addSubview:(sequenceView=[[UISequenceView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)])];
-    [sequenceView setDelegate:self];
+    //[self.view addSubview:(sequenceView=[[UISequenceView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)])];
+    //[sequenceView setDelegate:self];
     
-    [GUI imageWithFrame:CGRectMake(376, 662, 271, 25) parent:self.view source:@"source/feature_tip_360.png"];
-    [GUI lableWithFrame:CGRectMake(0, 644, 1024, 11) parent:self.view text:@"左右拖动查看产品360度" font:[UIFont systemFontOfSize:12] color:[UIColor colorWithHex:0xaa9e7bff] align:1];
+    //[GUI imageWithFrame:CGRectMake(376, 662, 271, 25) parent:self.view source:@"source/feature_tip_360.png"];
+    //[GUI lableWithFrame:CGRectMake(0, 644, 1024, 11) parent:self.view text:@"左右拖动查看产品360度" font:[UIFont systemFontOfSize:12] color:[UIColor colorWithHex:0xaa9e7bff] align:1];
+    
+    dis = [[DissectionView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)];
+    [self.view addSubview:dis];
+    [dis release];
 }
 
 - (void)viewDidUnload
@@ -159,6 +166,8 @@
 }
 
 -(void)dealloc{
+    [dis stopAnimation];
+    //
     [sequenceView release];
     [newSource release];
     [super dealloc];
@@ -178,6 +187,7 @@
 }
 //
 -(void)setSource:(NSDictionary *)source{
+    return;
     id temp = [source retain];
     if (newSource) {
         [newSource release],newSource=nil;
@@ -212,7 +222,7 @@
             [sequenceView addPoint:btn u:[temp objectForKey:@"u"] v:[temp objectForKey:@"v"]];
         }
     }
-}
+}/*
 -(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
     [sequenceView.pointLayer setHidden:YES];
     UITouch *touch = [touches anyObject];
@@ -235,5 +245,5 @@
     if (sequenceView.userInteractionEnabled){
         sequenceView.quality = UISequenceViewQualityHigh;
     }
-}
+}*/
 @end

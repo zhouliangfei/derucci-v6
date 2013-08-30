@@ -74,6 +74,9 @@
 
 //
 -(void)cellTouch:(UIButton*)sender{
+    if (sender.tag>1) {
+        return;
+    }
     FeatureViewController *feature = (FeatureViewController*)[Utils gotoWithName:@"FeatureViewController" animated:UITransitionStyleCoverHorizontal];
     feature.source = [source objectAtIndex:sender.tag-1];
 }

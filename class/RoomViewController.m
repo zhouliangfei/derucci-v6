@@ -198,6 +198,10 @@
     RoomColor *popView;
     UIView *leftView;
     //
+    UILabel *titleView;
+    UILabel *subTitleView;
+    UIImageView *backgroundView;
+    //
     int wallId;
     int floorId;
     int productId;
@@ -207,6 +211,7 @@
 
 @implementation RoomViewController
 @synthesize source;
+@dynamic style;
 
 - (void)viewDidLoad{
     [super viewDidLoad];
@@ -214,15 +219,16 @@
 	
     sequence = [[UISequenceView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)];
     [sequence setLayerCount:2];
-    [sequence setTotalFrame:1];
+    [sequence setTotalFrame:25];
     [self.view addSubview:sequence];
     
     leftView = [GUI viewWithFrame:CGRectMake(-226, 74, 274, 694) parent:self.view];
-    [GUI imageWithFrame:CGRectMake(0, 0, 226, 694) parent:leftView source:@"source/room_titBg1.png"];
+    backgroundView = [GUI imageWithFrame:CGRectMake(0, 0, 226, 694) parent:leftView];
+    subTitleView = [GUI lableWithFrame:CGRectMake(23, 63, 178, 16) parent:leftView text:nil font:[UIFont systemFontOfSize:16] color:[UIColor whiteColor] align:0];
+    titleView = [GUI lableWithFrame:CGRectMake(23, 27, 178, 48) parent:leftView text:nil font:[UIFont fontWithName:@"HelveticaNeueLTStd-ThCn" size:36] color:[UIColor whiteColor] align:0];
+    
     [GUI buttonWithFrame:CGRectMake(246, 17, 27, 28) parent:leftView normal:@"source/btn_open.png" target:self event:@selector(openTouch:)];
-    //标题
-    [GUI lableWithFrame:CGRectMake(23, 27, 178, 48) parent:leftView text:@"HAPPY TOUR" font:[UIFont fontWithName:@"HelveticaNeueLTStd-ThCn" size:36] color:[UIColor whiteColor] align:0];
-    [GUI lableWithFrame:CGRectMake(23, 63, 178, 16) parent:leftView text:@"享乐途" font:[UIFont systemFontOfSize:16] color:[UIColor whiteColor] align:0];
+
     //按钮
     [GUIExt RightAttributeWithFrame:CGRectMake(0, 104, 226, 79) parent:leftView title:@"COLORS OF FLOOR" subTitle:@"地板颜色" target:self event:@selector(floorTouch:)];
     [GUIExt RightAttributeWithFrame:CGRectMake(0, 183, 226, 79) parent:leftView title:@"COLORS OF WALL" subTitle:@"墙面颜色" target:self event:@selector(wallTouch:)];
@@ -234,6 +240,8 @@
     [GUI imageWithFrame:CGRectMake(0, 262, 226, 1) parent:leftView source:@"source/line.png"];
     [GUI imageWithFrame:CGRectMake(0, 341, 226, 1) parent:leftView source:@"source/line.png"];
     [GUI imageWithFrame:CGRectMake(0, 420, 226, 1) parent:leftView source:@"source/line.png"];
+    //
+    [self setStyle:0];
 }
 
 - (void)viewDidUnload
@@ -257,55 +265,76 @@
 }
 -(void)viewDidAppear:(BOOL)animated{
     [NavigateView shareInstanceInView:self.view];
-    [self initData];
-    //
-    if ([GUIExt extendsView]) {
-        [GUIExt extendsView].animationImages=nil;
+    [self updataWall];
+}
+
+-(void)setStyle:(int)style{
+    NSArray *title = [NSArray arrayWithObjects:
+                      @"NIGHT LIFE",@"夜生活",
+                      @"CAREER SHOW",@"职场秀",
+                      @"OTAKU",@"宅一族",
+                      @"FASHION 90S",@"潮90",
+                      @"THE NEW ARISTOCRACY",@"新贵族",
+                      @"HAPPY TOUR",@"享乐途",nil];
+    if (style/2<title.count) {
+        backgroundView.image =[UIImage imageNamed:[NSString stringWithFormat:@"source/room_titBg%d.png",style+1]];
+        subTitleView.text=[title objectAtIndex:style*2+1];
+        titleView.text = [title objectAtIndex:style*2];
+        titleView.adjustsFontSizeToFitWidth=YES;
     }
 }
 //初始化数据
--(void)initData{
+-(void)updataWall{
     id wall = [source objectForKey:@"roomWalls"];
     if (nil == wall) {
         wall = [Access getWallsWithRoomId:[source objectForKey:@"id"]];
         wallId = [self getDefault:wall];
         [source setValue:wall  forKey:@"roomWalls"];
     }
-    id floor = [source objectForKey:@"roomFloors"];
-    if (nil == floor) {
-        floor = [Access getFloorsWithRoomId:[source objectForKey:@"id"] wallId:[NSNumber numberWithInt:wallId]];
-        floorId = [self getDefault:floor];
-        [source setValue:floor forKey:@"roomFloors"];
-    }
-    NSString *path = [Access getPathWithRoomId:[source objectForKey:@"id"] wallId:[NSNumber numberWithInt:wallId] floorId:[NSNumber numberWithInt:floorId]];
+    
+    id floor = [Access getFloorsWithRoomId:[source objectForKey:@"id"] wallId:[NSNumber numberWithInt:wallId]];
+    floorId = [self getDefault:floor];
+    [source setValue:floor forKey:@"roomFloors"];
+    
+    [self updataFloor];
+}
+-(void)updataFloor{
+    NSDictionary *path = [Access getPathWithRoomId:[source objectForKey:@"id"] wallId:[NSNumber numberWithInt:wallId] floorId:[NSNumber numberWithInt:floorId]];
     if (path) {
-        NSString *low = [Utils pathForDocument:[path stringByAppendingPathComponent:@"s%d.jpg"]];
-        NSString *high = [Utils pathForDocument:[path stringByAppendingPathComponent:@"%d.jpg"]];
+        NSString *low = [Utils pathForDocument:[[path objectForKey:@"files"] stringByAppendingPathComponent:@"s%d.png"]];
+        NSString *high = [Utils pathForDocument:[[path objectForKey:@"files"] stringByAppendingPathComponent:@"%d.png"]];
         [sequence updata:0 low:low high:high];
     }
+    
     [self updataProduct];
 }
 -(void)updataProduct{
-    //layer2
     id pro = [source objectForKey:@"roomProducts"];
     if (nil == pro) {
         pro = [Access getProductsWithRoomId:[source objectForKey:@"id"]];
         productId = [self getDefault:pro];
         [source setValue:pro forKey:@"roomProducts"];
     }
-    //id col = [source objectForKey:@"roomProColors"];
-    //if (nil == col) {
-        id col = [Access getColorsWithProductId:[NSNumber numberWithInt:productId]];
-        productColorId = [self getDefault:col];
-        [source setValue:col forKey:@"roomProColors"];
-    //}
-    NSString *proPath = [Access getPathWithProductId:[NSNumber numberWithInt:productId] colorId:[NSNumber numberWithInt:productColorId]];
+    
+    id col = [Access getColorsWithProductId:[NSNumber numberWithInt:productId]];
+    productColorId = [self getDefault:col];
+    [source setValue:col forKey:@"roomProColors"];
+    
+    [self updataProductColor];
+}
+-(void)updataProductColor{
+    NSDictionary *proPath = [Access getPathWithProductId:[NSNumber numberWithInt:productId] colorId:[NSNumber numberWithInt:productColorId]];
     if (proPath) {
-        NSString *low = [Utils pathForDocument:[proPath stringByAppendingPathComponent:@"s%d.jpg"]];
-        NSString *high = [Utils pathForDocument:[proPath stringByAppendingPathComponent:@"%d.jpg"]];
+        NSString *low = [Utils pathForDocument:[[proPath objectForKey:@"files"] stringByAppendingPathComponent:@"s%d.png"]];
+        NSString *high = [Utils pathForDocument:[[proPath objectForKey:@"files"] stringByAppendingPathComponent:@"%d.png"]];
         [sequence updata:1 low:low high:high];
     }
+    //这里更新外屏
+    if ([GUIExt extendsView]) {
+        [GUIExt extendsView].animationImages=[NSArray arrayWithObject:[proPath objectForKey:@"photo"]];
+    }
 }
+
 -(int)getDefault:(id)data{
     for (id val in data) {
         if ([[val objectForKey:@"isDefault"] intValue]==1) {
@@ -378,20 +407,32 @@
         }
     }
 }
--(void)floorTouch:(UIControl*)sender{
-    [self removePopView];
-    sender.selected=!sender.selected;
-    if (sender.selected) {
-        [self resetButton:sender];
-        [self addPopWithData:[source objectForKey:@"roomFloors"] style:0 select:floorId];
-    }
-}
 -(void)wallTouch:(UIControl*)sender{
     [self removePopView];
     sender.selected=!sender.selected;
     if (sender.selected) {
         [self resetButton:sender];
         [self addPopWithData:[source objectForKey:@"roomWalls"] style:0 select:wallId];
+        if (popView) {
+            popView.clickEvent=^(id target){
+                wallId = popView.select;
+                [self updataWall];
+            };
+        }
+    }
+}
+-(void)floorTouch:(UIControl*)sender{
+    [self removePopView];
+    sender.selected=!sender.selected;
+    if (sender.selected) {
+        [self resetButton:sender];
+        [self addPopWithData:[source objectForKey:@"roomFloors"] style:0 select:floorId];
+        if (popView) {
+            popView.clickEvent=^(id target){
+                floorId = popView.select;
+                [self updataFloor];
+            };
+        }
     }
 }
 -(void)productTouch:(UIControl*)sender{
@@ -414,6 +455,12 @@
     if (sender.selected) {
         [self resetButton:sender];
         [self addPopWithData:[source objectForKey:@"roomProColors"] style:0 select:productColorId];
+        if (popView) {
+            popView.clickEvent=^(id target){
+                productColorId = popView.select;
+                [self updataProductColor];
+            };
+        }
     }
 }
 //

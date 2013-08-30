@@ -10,4 +10,5 @@
 
 @interface RoomViewController : UIViewController
 @property(nonatomic,retain) NSMutableDictionary *source;
+@property(nonatomic,assign) int style;
 @end

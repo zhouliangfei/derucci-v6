@@ -68,9 +68,13 @@
 
 //
 -(void)cellTouch:(UIButton*)sender{
+    if (sender.tag>1) {
+        return;
+    }
     id val = [Access getRoomsWithId:[NSNumber numberWithInt:sender.tag]];
     if (val) {
         RoomViewController *room = (RoomViewController*)[Utils gotoWithName:@"RoomViewController" animated:UITransitionStyleCoverHorizontal];
+        room.style = sender.tag-1;
         room.source = [val lastObject];
     }
 }

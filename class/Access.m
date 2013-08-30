@@ -108,8 +108,8 @@
 }
 +(id)getProductsWithType:(NSNumber*)value room:(NSString*)room key:(NSString*)key{
     NSString *sql = @"SELECT a.*,b.bigPhoto,f.roomTypeId,f.roomTypeName FROM product a,productpicture b "\
-    "LEFT JOIN (SELECT e.id,c.id roomTypeId,c.name roomTypeName FROM roomtype c,room d,roommapwallcarpet e "\
-    "WHERE e.deleted=0 AND e.room_id=d.id AND d.deleted=0 AND d.roomType_id=c.id AND c.deleted=0) f ON a.roomMapWallCarpet_id=f.id "\
+    "LEFT JOIN (SELECT DISTINCT b.id,a.id roomTypeId,a.name roomTypeName FROM roomtype a,roomproductmapcolor b,room c,roommapproduct d WHERE "\
+    "d.deleted=0 AND d.room_id=c.id AND c.deleted=0 AND c.roomType_id=a.id AND b.deleted=0 AND b.roomMapProduct_id=d.id) f ON a.roomProductMapColor_id=f.id "\
     "WHERE b.deleted=0 AND b.isDefault=1 AND b.product_id=a.id AND a.deleted=0";
     if (value) {
         sql = [sql stringByAppendingFormat:@" AND a.productType_id=%@",value];
@@ -120,7 +120,7 @@
     if (key) {
         sql = [sql stringByAppendingFormat:@" AND (a.name LIKE '%%%@%%' OR a.model LIKE '%%%@%%' OR a.description LIKE '%%%@%%')",key,key,key];
     }
-    return [[SQL shareInstance] fetch:sql];
+    return [[SQL shareInstance] fetch:[sql stringByAppendingString:@" ORDER BY a.model"]];
 }
 +(id)getProductOverviewWithId:(NSNumber*)value{
     NSString *sql = @"SELECT * FROM productsummary WHERE deleted=0";
@@ -162,7 +162,7 @@
                      "deleted=0 AND room_id=%@ AND wall_id=%@ AND carpet_id=%@",roomId,wallId,floorId];
     NSArray *temp = [[SQL shareInstance] fetch:sql];
     if (temp) {
-        return [[temp lastObject] objectForKey:@"files"];
+        return [temp lastObject];
     }
     return nil;
 }
@@ -177,12 +177,12 @@
     return [[SQL shareInstance] fetch:sql];
 }
 +(id)getPathWithProductId:(NSNumber*)productId colorId:(NSNumber*)colorId{
-    NSString *sql = [NSString stringWithFormat:@"SELECT files FROM roomproductmapcolor WHERE "\
+    NSString *sql = [NSString stringWithFormat:@"SELECT * FROM roomproductmapcolor WHERE "\
                      "deleted=0 AND roomMapProduct_id=%@ AND color_id=%@",productId,colorId];
     NSArray *temp = [[SQL shareInstance] fetch:sql];
     
     if (temp) {
-        return [[temp lastObject] objectForKey:@"files"];
+        return [temp lastObject];
     }
     return nil;
 }

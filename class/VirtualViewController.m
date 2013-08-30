@@ -17,7 +17,6 @@
     UIView *bottomView;
     UIFlipView *thumbView;
     //
-    int currentArea;
     int currentPano;
     float pan;
     float tilt;
@@ -32,10 +31,9 @@
     
     NSString *string = [NSString stringWithContentsOfFile:[Utils pathForDocument:@"virtual/data.json"] encoding:NSUTF8StringEncoding error:nil];
     source = [[string JSONValue] retain];
-    currentArea = -1;
 	
     [GUI imageWithFrame:CGRectMake(0, 0, 1024, 768) parent:self.view source:@"source/background.png"];
-    [GUI imageWithFrame:CGRectMake(366, 110, 279, 33) parent:self.view source:@"source/virtual_title.png"];
+    [GUI imageWithFrame:CGRectMake(366, 110, 279, 34) parent:self.view source:@"source/virtual_title.png"];
     
     panoView = [GUI viewWithFrame:CGRectMake(0, -593, 1024, 593) parent:self.view];
 
@@ -49,17 +47,17 @@
     
     mapView = [GUI viewWithFrame:CGRectMake(0, 0, 1024, 768) parent:self.view];
     [GUI imageWithFrame:CGRectFromString([source objectForKey:@"frame"]) parent:mapView document:[source objectForKey:@"path"]];
-    NSArray *area = [source objectForKey:@"area"];
-    for (int i=0; i<area.count; i++) {
-        CGPoint center = CGPointFromString([[area objectAtIndex:i] objectForKey:@"position"]);
+    NSArray *panorama = [source objectForKey:@"panorama"];
+    for (int i=0; i<panorama.count; i++) {
+        CGPoint center = CGPointFromString([[panorama objectAtIndex:i] objectForKey:@"position"]);
         
         UIButton *btn = [GUI buttonWithFrame:CGRectMake(0, 0, 43, 69) parent:mapView normal:@"source/virtual_icon_nor.png" active:@"source/virtual_icon_act.png" target:self event:@selector(mapTouch:)];
-        [btn setCenter:CGPointMake(center.x, center.y-768)];
+        [btn setCenter:CGPointMake(center.x, center.y-200)];
         [btn setAlpha:0];
         [btn setTag:i+1];
         
         [UIView animateWithDuration:0.4 delay:0.15 * i options:UIViewAnimationOptionCurveEaseInOut animations:^{
-            [btn setCenter:center];
+            [btn setCenter:CGPointMake(center.x, center.y-btn.frame.size.height/2)];
             [btn setAlpha:1];
         } completion:nil];
     }
@@ -93,16 +91,8 @@
 //
 -(void)mapTouch:(UIButton*)sender{
     if (NO == sender.selected) {
-        currentArea = sender.tag-1;
-        currentPano = 0;
-        //
-        for (UIButton *btn in mapView.subviews) {
-            if ([btn isKindOfClass:[UIButton class]]) {
-                [btn setSelected:btn==sender];
-            }
-        }
-        [thumbView reloadData];
-        [self displayPano];
+        currentPano = sender.tag-1;
+        [mapView setUserInteractionEnabled:NO];
         //
         [UIView beginAnimations:nil context:nil];
         [mapView setTransform:CGAffineTransformMakeScale(0.34, 0.34)];
@@ -110,6 +100,8 @@
         [panoView setFrame:CGRectMake(0, 0, 1024, 593)];
         [bottomView setFrame:CGRectMake(0, 593, 1024, 175)];
         [UIView commitAnimations];
+        //
+        [self thumbTouch:sender];
     }
 }
 -(void)thumbTouch:(UIControl*)sender{
@@ -118,23 +110,25 @@
         //
         for (UIControl *btn in thumbView.subviews) {
             if ([btn isKindOfClass:[UIControl class]]) {
-                [btn setSelected:btn==sender];
+                [btn setSelected:(btn.tag-1==currentPano)];
+            }
+        }
+        for (UIButton *btn in mapView.subviews) {
+            if ([btn isKindOfClass:[UIButton class]]) {
+                [btn setSelected:(btn.tag-1==currentPano)];
             }
         }
         [self displayPano];
     }
 }
 -(void)displayPano{
-    id cur = [[[[source objectForKey:@"area"] objectAtIndex:currentArea] objectForKey:@"panorama"] objectAtIndex:currentPano];
+    id cur = [[source objectForKey:@"panorama"] objectAtIndex:currentPano];
     [self makePanoView:cur];
 }
 
 //列表
 -(NSInteger)numberOfCellInFlipView:(UIFlipView *)flipView{
-    if (currentArea>=0) {
-        return [[[[source objectForKey:@"area"] objectAtIndex:currentArea] objectForKey:@"panorama"] count];
-    }
-    return 0;
+    return [[source objectForKey:@"panorama"] count];
 }
 -(UIFlipViewCell *)flipView:(UIFlipView *)flipView cellAtIndex:(NSInteger)index{
     static NSString *simpleFlipIdentifier = @"aboutFlipIdentifier";
@@ -143,7 +137,7 @@
         cell = [[[GUIFlipBorderCell alloc] initWithReuseIdentifier:simpleFlipIdentifier] autorelease];
         [cell addTarget:self action:@selector(thumbTouch:) forControlEvents:UIControlEventTouchUpInside];
     }
-    id value = [[[source objectForKey:@"area"] objectAtIndex:currentArea] objectForKey:@"panorama"];
+    id value = [source objectForKey:@"panorama"];
     NSString *filePath = [[value objectAtIndex:index] objectForKey:@"thumb"];
     [cell setImage:[UIImage imageWithDocument:filePath]];
     [cell setSelected:index==currentPano];

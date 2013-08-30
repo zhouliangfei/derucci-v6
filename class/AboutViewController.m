@@ -26,7 +26,7 @@
 -(id)initWithFrame:(CGRect)frame{
     self = [super initWithFrame:frame];
     if (self) {
-        shadowView = [[GUI imageWithFrame:CGRectMake(241, 1, 49, 216) parent:self source:@"source/about_shadown.png"] retain];
+        shadowView = [[GUI imageWithFrame:CGRectMake(241, 2, 58, 212) parent:self source:@"source/about_shadown.png"] retain];
         
         imagetView = [[UIButton buttonWithFrame:CGRectMake(0, 0, 241, 214)] retain];
         [imagetView setContentMode:UIViewContentModeScaleAspectFit];
@@ -125,7 +125,7 @@
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier] autorelease];
         [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
         //
-        [GUI imageWithFrame:CGRectMake(67, 26, 950, 279) parent:cell source:@"source/about_cellBase.png"];
+        [GUI imageWithFrame:CGRectMake(67, 21, 957, 308) parent:cell source:@"source/about_cellBase.png"];
     }
     //清空旧数据
     for (UIView *tmp in cell.subviews){
@@ -139,7 +139,7 @@
     for (uint i=b; i<e; i++){
         NSString *filePath = [[source objectAtIndex:i] objectForKey:@"photo"];
         
-        AboutViewCell *item = [[AboutViewCell alloc] initWithFrame:CGRectMake(97+i%3*291, 0, 290, 216)];
+        AboutViewCell *item = [[AboutViewCell alloc] initWithFrame:CGRectMake(97+i%3*291, 0, 290, 214)];
         [item addTarget:self action:@selector(cellTouch:) forControlEvents:UIControlEventTouchUpInside];
         [item setImage:[UIImage imageWithDocument:filePath]];
         [item setTag:i+1];

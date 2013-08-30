@@ -48,8 +48,8 @@
 }
 -(void)sortChildren:(CGSize)size{
     [background setFrame:CGRectMake(0, 0, size.width, size.height)];
-    [imageView setFrame:CGRectMake(10, 10, size.width-20, size.height-40)];
-    [titleView setFrame:CGRectMake(10,  size.height-30, size.width-20, 30)];
+    [imageView setFrame:CGRectMake(10, 10, size.width-20, size.height-65)];
+    [titleView setFrame:CGRectMake(10,  size.height-55, size.width-20, 55)];
 }
 @end
 
@@ -89,8 +89,8 @@
 }
 -(void)sortChildren:(CGSize)size{
     [background setFrame:CGRectMake(0, 0, size.width, size.height)];
-    [imageView setFrame:CGRectMake(10, 10, size.width-20, size.height-40)];
-    [titleView setFrame:CGRectMake(10,  size.height-30, size.width-20, 30)];
+    [imageView setFrame:CGRectMake(10, 10, size.width-20, size.height-65)];
+    [titleView setFrame:CGRectMake(10,  size.height-55, size.width-20, 55)];
 }
 @end
 
@@ -313,19 +313,25 @@
 
 //*****************
 @interface ProductsTopView : UIView
+@property(nonatomic,readonly) UIButton *switchView;
+@property(nonatomic,readonly) UIButton *seachView;
+@property(nonatomic,readonly) UIButton *eachView;
 @end
 
 @implementation ProductsTopView
+@synthesize switchView;
+@synthesize seachView;
+@synthesize eachView;
 
 -(id)initWithTarget:(id)target{
     self=[super initWithFrame:CGRectMake(193, 0, 723, 75)];
     if (self) {
         [GUI imageWithFrame:CGRectMake(456, 24, 267, 29) parent:self source:@"source/product_line.png"];
         //
-        [ProductsTopCell cellWithWithFrame:CGRectMake(457, 1, 88, 52) parent:self normal:@"source/product_icon2.png" active:@"source/product_icon1.png" 
-                               normalTitle:@"常规排列" activeTitle:@"动感排列" target:target event:@selector(switchTouch:)];
-        [ProductsTopCell cellWithWithFrame:CGRectMake(545, 1, 88, 52) parent:self normal:@"source/product_icon4.png" title:@"产品搜索" target:target event:@selector(seachTouch:)];
-        [ProductsTopCell cellWithWithFrame:CGRectMake(634, 1, 88, 52) parent:self normal:@"source/product_icon3.png" title:@"产品筛选" target:target event:@selector(eachTouch:)];
+        switchView=[ProductsTopCell cellWithWithFrame:CGRectMake(457, 1, 88, 52) parent:self normal:@"source/product_icon2.png" active:@"source/product_icon1.png" 
+                                          normalTitle:@"常规排列" activeTitle:@"动感排列" target:target event:@selector(switchTouch:)];
+        seachView=[ProductsTopCell cellWithWithFrame:CGRectMake(545, 1, 88, 52) parent:self normal:@"source/product_icon4.png" title:@"产品搜索" target:target event:@selector(seachTouch:)];
+        eachView=[ProductsTopCell cellWithWithFrame:CGRectMake(634, 1, 88, 52) parent:self normal:@"source/product_icon3.png" title:@"产品筛选" target:target event:@selector(eachTouch:)];
     }
     return self;
 }
@@ -593,8 +599,8 @@
         
         //加载新数据
         id cur = [source objectAtIndex:currentPage];
-        id room = productEachView ? productEachView.value : nil;
-        id dat = [Access getProductsWithType:[cur objectForKey:@"id"] room:room key:productSeachView.value];
+        id room = (productEachView ? productEachView.value : nil);
+        id dat = [Access getProductsWithType:[cur objectForKey:@"id"] room:(currentPage==0 ? room : nil) key:productSeachView.value];
         if (dat) {
             [cur setValue:dat forKey:@"product"];
             ProductsCell *cell = (ProductsCell*)[bookView cellForIndex:currentPage];
@@ -616,6 +622,14 @@
         int value = floor((bookView.contentOffset.x + bookView.frame.size.width * 0.5) / bookView.frame.size.width);
         if (currentPage != value) {
             currentPage = value;
+            if (currentPage==0) {
+                topView.eachView.alpha=1;
+                topView.eachView.userInteractionEnabled=YES;
+            }else {
+                topView.eachView.alpha=0.5;
+                topView.eachView.userInteractionEnabled=NO;
+            }
+            
             //
             for (ProductsTipsCell *view in topView.subviews) {
                 if ([view isKindOfClass:[ProductsTipsCell class]]) {
@@ -643,6 +657,7 @@
 //
 -(void)productTouch:(UIControl*)sender{
     ProductViewController *product = (ProductViewController*)[Utils gotoWithName:@"ProductViewController" animated:UITransitionStyleCoverHorizontal];
+    product.style = currentPage;
     product.currentIndex = sender.tag-1;
     product.source = [[source objectAtIndex:currentPage] objectForKey:@"product"];
 }

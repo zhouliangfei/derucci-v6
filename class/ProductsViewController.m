@@ -26,7 +26,7 @@
 -(id)initWithFrame:(CGRect)frame{
     self = [super initWithFrame:frame];
     if (self) {
-        UIImage *image = [[UIImage imageNamed:@"source/product_cellBase.png"] stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+        UIImage *image = [[UIImage imageWithResource:@"source/product_cellBase.png"] stretchableImageWithLeftCapWidth:10 topCapHeight:10];
         background = [[UIImageView alloc] initWithImage:image];
         [self addSubview:background];
         //
@@ -67,7 +67,7 @@
 -(id)initWithReuseIdentifier:(NSString *)reuseIdentifier{
     self = [super initWithReuseIdentifier:reuseIdentifier];
     if (self) {
-        UIImage *image = [[UIImage imageNamed:@"source/product_cellBase.png"] stretchableImageWithLeftCapWidth:10 topCapHeight:10];
+        UIImage *image = [[UIImage imageWithResource:@"source/product_cellBase.png"] stretchableImageWithLeftCapWidth:10 topCapHeight:10];
         background = [[UIImageView alloc] initWithImage:image];
         [self addSubview:background];
         //
@@ -184,11 +184,17 @@
         NSDictionary *data = [_source objectAtIndex:i];
         Products2DViewCell *temp = [[Products2DViewCell alloc] initWithFrame:CGRectMake(329*(i-b), 0, 324, 225)];
         [temp addTarget:self action:@selector(productTouch:) forControlEvents:UIControlEventTouchUpInside];
-        [temp.imageView setImage:[UIImage imageWithDocument:[data objectForKey:@"photo"]]];
-        [temp.titleView setText:[data objectForKey:@"model"]];
-        [temp setTag:i+1];
         [cell addSubview:temp];
+        [temp setTag:i+1];
         [temp release];
+        //
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(void){
+            UIImage *imgs = [UIImage imageWithDocument:[data objectForKey:@"photo"]];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [temp.titleView setText:[data objectForKey:@"model"]];
+                [temp.imageView setImage:imgs];
+            });
+        });
     }
     
     return cell;
@@ -282,7 +288,7 @@
 -(id)initWithFrame:(CGRect)frame{
     self = [super initWithFrame:frame];
     if (self) {
-        [self setBackgroundImage:[UIImage imageNamed:@"source/product_btnActBg.png"] forState:UIControlStateSelected];
+        [self setBackgroundImage:[UIImage imageWithResource:@"source/product_btnActBg.png"] forState:UIControlStateSelected];
         [self setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [self.titleLabel setFont:[UIFont boldSystemFontOfSize:12]];
         [self setTitleEdgeInsets:UIEdgeInsetsMake(0, 8, 0, 0)];
@@ -293,7 +299,7 @@
 +(id)cellWithWithFrame:(CGRect)frame parent:(UIView*)parent normal:(NSString*)normal active:(NSString*)active normalTitle:(NSString*)normalTitle activeTitle:(NSString*)activeTitle target:(id)target event:(SEL)event{
     ProductsTopCell *temp = [[ProductsTopCell alloc] initWithFrame:frame];
     if (active) {
-        [temp setImage:[UIImage imageNamed:active] forState:UIControlStateSelected];
+        [temp setImage:[UIImage imageWithResource:active] forState:UIControlStateSelected];
     }
     if (activeTitle) {
         [temp setTitle:activeTitle forState:UIControlStateSelected];
@@ -301,7 +307,7 @@
     if (target && event) {
         [temp addTarget:target action:event forControlEvents:UIControlEventTouchUpInside];
     }
-    [temp setImage:[UIImage imageNamed:normal] forState:UIControlStateNormal];
+    [temp setImage:[UIImage imageWithResource:normal] forState:UIControlStateNormal];
     [temp setTitle:normalTitle forState:UIControlStateNormal];
     [parent addSubview:temp];
     return [temp autorelease];
@@ -357,7 +363,7 @@
         
         [GUI imageWithFrame:CGRectMake(649, 53, 267, 45) parent:self source:@"source/product_seaBase.png"];
         inputView = [GUI textFieldWithFrame:CGRectMake(655, 59, 222, 33) parent:self text:nil font:[UIFont systemFontOfSize:14] color:[UIColor whiteColor] align:0 panding:5];
-        [inputView setBackground:[UIImage imageNamed:@"source/product_inBase.png"]];
+        [inputView setBackground:[UIImage imageWithResource:@"source/product_inBase.png"]];
         [GUI buttonWithFrame:CGRectMake(876, 59, 34, 33) parent:self normal:@"source/product_icon5.png" target:self event:@selector(cellTouch:)];
     }
     return self;
@@ -389,8 +395,8 @@
 -(id)initWithFrame:(CGRect)frame{
     self = [super initWithFrame:frame];
     if (self) {
-        [self setImage:[UIImage imageNamed:@"source/product_selAct.png"] forState:UIControlStateSelected];
-        [self setImage:[UIImage imageNamed:@"source/product_selNor.png"] forState:UIControlStateNormal];
+        [self setImage:[UIImage imageWithResource:@"source/product_selAct.png"] forState:UIControlStateSelected];
+        [self setImage:[UIImage imageWithResource:@"source/product_selNor.png"] forState:UIControlStateNormal];
         [self setTitleColor:[UIColor colorWithHex:0xf39e7eff] forState:UIControlStateNormal];
         [self.titleLabel setFont:[UIFont boldSystemFontOfSize:12]];
         [self setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];

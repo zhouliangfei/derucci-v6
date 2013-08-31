@@ -27,7 +27,7 @@ NSString *const NetworkStatusChange = @"networkStatusChange";
 //
 static void detectNetworkCallback(SCNetworkReachabilityRef target, SCNetworkReachabilityFlags flags, void *info)
 {
-	DetectNetwork *reach = (__bridge DetectNetwork*)info;
+	DetectNetwork *reach = ( DetectNetwork*)info;
     
 	[reach statusChange];
 }
@@ -59,7 +59,7 @@ static void detectNetworkCallback(SCNetworkReachabilityRef target, SCNetworkReac
         
         if(reachability) 
         {
-            SCNetworkReachabilityContext context = {0, (__bridge void *)self, NULL, NULL, NULL};
+            SCNetworkReachabilityContext context = {0, ( void *)self, NULL, NULL, NULL};
             
             SCNetworkReachabilitySetCallback(reachability, detectNetworkCallback, &context);
             

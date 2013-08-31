@@ -173,7 +173,7 @@
 }
 +(id)getColorsWithProductId:(NSNumber*)value{
     NSString *sql = [NSString stringWithFormat:@"SELECT a.isDefault,b.* FROM roomproductmapcolor a,color b WHERE "\
-                     "b.deleted=0 AND b.id=a.color_id AND a.deleted=0 AND a.roomMapProduct_id=%@ GROUP BY b.id",value];
+                     "b.deleted=0 AND b.id=a.color_id AND a.deleted=0 AND a.roomMapProduct_id=%@ GROUP BY a.id",value];
     return [[SQL shareInstance] fetch:sql];
 }
 +(id)getPathWithProductId:(NSNumber*)productId colorId:(NSNumber*)colorId{

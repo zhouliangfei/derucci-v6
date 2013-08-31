@@ -14,23 +14,15 @@
 @end
 
 //
-@interface UISequenceViewCell : UIView
-{
+@interface UISequenceViewCell : UIView{
     UIImageView *imageView;
 }
-
 @property(nonatomic,readonly) NSInteger index;
-
 @property(nonatomic,retain) NSString *path;
-
 @property(nonatomic,retain) NSString *file;
-
-@property(nonatomic,retain) NSMutableArray *cache;
-
+@property(nonatomic,retain) UIView *cache;
 @property(nonatomic,assign) UIImage *image;
-
 -(id)initWithIndex:(uint)value;
-
 @end
 
 //
@@ -51,9 +43,6 @@ typedef NSInteger UISequenceViewQuality;
 @property(nonatomic,assign) id <UISequenceViewDelegate> delegate;
 
 -(void)updata:(int)layer low:(NSString *)low high:(NSString*)high;
-
 -(void)addPoint:(UIView*)point u:(NSString*)u v:(NSString*)v;
-
 -(void)playTo:(int)value;
-
 @end

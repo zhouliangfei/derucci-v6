@@ -24,10 +24,20 @@
     return [temp autorelease];
 }
 @end
+//UIControl
+@implementation UIControl(UIControlGUI)
++(id)controlWithFrame:(CGRect)frame{
+    UIControl *temp = [[UIControl alloc] initWithFrame:frame];
+    return [temp autorelease];
+}
+@end
 //UIImage
 @implementation UIImage(UIImageGUI)
 +(id)imageWithDocument:(NSString*)path{
     return [UIImage imageWithContentsOfFile:[Utils pathForDocument:path]];
+}
++(id)imageWithResource:(NSString*)path{
+    return [UIImage imageWithContentsOfFile:[Utils pathForResource:path]];
 }
 @end
 //UIImageView
@@ -114,7 +124,7 @@
     @synchronized(self){
         if (nil == loadingViewGUI){
             loadingViewGUI = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-            [loadingViewGUI setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5]];
+            [loadingViewGUI setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.3]];
             [loadingViewGUI setContentMode:UIViewContentModeCenter];
             [loadingViewGUI setFrame:CGRectMake(0, 0, 120, 120)];
             [loadingViewGUI setUserInteractionEnabled:NO];
@@ -129,10 +139,8 @@
             [loadingViewGUI startAnimating];
             [view setUserInteractionEnabled:NO];
             //
-            if (loadingViewGUI.superview!=view) {
-                [loadingViewGUI setCenter:view.center];
-                [view addSubview:loadingViewGUI];
-            }
+            [loadingViewGUI setCenter:view.center];
+            [view addSubview:loadingViewGUI];
         }else {
             [UIView beginAnimations:nil context:nil];
             [loadingViewGUI setAlpha:0];
@@ -146,6 +154,12 @@
 
 +(id)viewWithFrame:(CGRect)frame parent:(UIView*)parent{
     UIView *temp = [UIView viewWithFrame:frame];
+    [parent addSubview:temp];
+    return temp;
+}
+
++(id)controlWithFrame:(CGRect)frame parent:(UIView*)parent{
+    UIControl *temp = [UIControl controlWithFrame:frame];
     [parent addSubview:temp];
     return temp;
 }
@@ -232,7 +246,7 @@
 }
 +(id)imageWithFrame:(CGRect)frame parent:(UIView*)parent source:(NSString*)source{
     UIImageView *temp = [GUI imageWithFrame:frame parent:parent];
-    [temp setImage:[UIImage imageNamed:source]];
+    [temp setImage:[UIImage imageWithResource:source]];
     return temp;
 }
 +(id)imageWithFrame:(CGRect)frame parent:(UIView*)parent document:(NSString*)document{
@@ -249,7 +263,7 @@
 +(id)buttonWithFrame:(CGRect)frame parent:(UIView*)parent normal:(NSString*)normal target:(id)target event:(SEL)event{
     UIButton *temp = [GUI buttonWithFrame:frame parent:parent];
     if (normal) {
-        [temp setBackgroundImage:[UIImage imageNamed:normal] forState:UIControlStateNormal];
+        [temp setBackgroundImage:[UIImage imageWithResource:normal] forState:UIControlStateNormal];
     }
     if (target && event) {
         [temp addTarget:target action:event forControlEvents:UIControlEventTouchUpInside];
@@ -259,7 +273,7 @@
 +(id)buttonWithFrame:(CGRect)frame parent:(UIView*)parent normal:(NSString*)normal active:(NSString*)active target:(id)target event:(SEL)event{
     UIButton *temp = [GUI buttonWithFrame:frame parent:parent normal:normal target:target event:event];
     if (active) {
-        [temp setBackgroundImage:[UIImage imageNamed:active] forState:UIControlStateSelected];
+        [temp setBackgroundImage:[UIImage imageWithResource:active] forState:UIControlStateSelected];
     }
     return temp;
 }

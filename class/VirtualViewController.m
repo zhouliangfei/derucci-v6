@@ -12,9 +12,9 @@
 
 @interface VirtualViewController (){
     NSDictionary *source;
-    UIView *mapView;
     UIView *panoView;
     UIView *bottomView;
+    UIControl *mapView;
     UIFlipView *thumbView;
     //
     int currentPano;
@@ -45,13 +45,15 @@
     [bottomView addSubview:thumbView];
     [thumbView release];
     
-    mapView = [GUI viewWithFrame:CGRectMake(0, 0, 1024, 768) parent:self.view];
+    mapView = [GUI controlWithFrame:CGRectMake(0, 0, 1024, 768) parent:self.view];
+    [mapView addTarget:self action:@selector(mapTouch:) forControlEvents:UIControlEventTouchUpInside];
+    
     [GUI imageWithFrame:CGRectFromString([source objectForKey:@"frame"]) parent:mapView document:[source objectForKey:@"path"]];
     NSArray *panorama = [source objectForKey:@"panorama"];
     for (int i=0; i<panorama.count; i++) {
         CGPoint center = CGPointFromString([[panorama objectAtIndex:i] objectForKey:@"position"]);
         
-        UIButton *btn = [GUI buttonWithFrame:CGRectMake(0, 0, 43, 69) parent:mapView normal:@"source/virtual_icon_nor.png" active:@"source/virtual_icon_act.png" target:self event:@selector(mapTouch:)];
+        UIButton *btn = [GUI buttonWithFrame:CGRectMake(0, 0, 43, 69) parent:mapView normal:@"source/virtual_icon_nor.png" active:@"source/virtual_icon_act.png" target:self event:@selector(mapCellTouch:)];
         [btn setCenter:CGPointMake(center.x, center.y-200)];
         [btn setAlpha:0];
         [btn setTag:i+1];
@@ -91,8 +93,24 @@
 //
 -(void)mapTouch:(UIButton*)sender{
     if (NO == sender.selected) {
+        [sender setSelected:YES];
+        for (UIButton *btn in mapView.subviews) {
+            if ([btn isKindOfClass:[UIButton class]]) {
+                [btn setUserInteractionEnabled:YES];
+            }
+        }
+        [UIView beginAnimations:nil context:nil];
+        [mapView setTransform:CGAffineTransformIdentity];
+        [mapView setCenter:self.view.center];
+        [panoView setFrame:CGRectMake(0, -593, 1024, 593)];
+        [bottomView setFrame:CGRectMake(0, 768, 1024, 175)];
+        [UIView commitAnimations];
+    }
+}
+-(void)mapCellTouch:(UIButton*)sender{
+    [mapView setSelected:NO];
+    if (NO == sender.selected) {
         currentPano = sender.tag-1;
-        [mapView setUserInteractionEnabled:NO];
         //
         [UIView beginAnimations:nil context:nil];
         [mapView setTransform:CGAffineTransformMakeScale(0.34, 0.34)];
@@ -116,6 +134,7 @@
         for (UIButton *btn in mapView.subviews) {
             if ([btn isKindOfClass:[UIButton class]]) {
                 [btn setSelected:(btn.tag-1==currentPano)];
+                [btn setUserInteractionEnabled:NO];
             }
         }
         [self displayPano];
@@ -174,7 +193,7 @@
     tilt = 0.0f;
     //生成热点
     for (id pt in [data objectForKey:@"point"]){
-        PLButton *btn = [pano addPointWithImage:[UIImage imageNamed:@""]];
+        PLButton *btn = [pano addPointWithImage:[UIImage imageWithResource:@""]];
         btn.u = [[pt objectForKey:@"u"] floatValue];
         btn.v = [[pt objectForKey:@"v"] floatValue];
         btn.data = pt;

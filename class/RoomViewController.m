@@ -211,7 +211,6 @@
 
 @implementation RoomViewController
 @synthesize source;
-@dynamic style;
 
 - (void)viewDidLoad{
     [super viewDidLoad];
@@ -265,19 +264,22 @@
 }
 -(void)viewDidAppear:(BOOL)animated{
     [NavigateView shareInstanceInView:self.view];
-    [self updataWall];
+    if (source) {
+        [self setStyle:[[source objectForKey:@"id"] intValue]-1];
+        [self updataWall];
+    }
 }
 
 -(void)setStyle:(int)style{
     NSArray *title = [NSArray arrayWithObjects:
-                      @"NIGHT LIFE",@"夜生活",
                       @"CAREER SHOW",@"职场秀",
-                      @"OTAKU",@"宅一族",
-                      @"FASHION 90S",@"潮90",
+                      @"NIGHT LIFE",@"夜生活",
+                      @"HAPPY TOUR",@"享乐途",
                       @"THE NEW ARISTOCRACY",@"新贵族",
-                      @"HAPPY TOUR",@"享乐途",nil];
+                      @"OTAKU",@"宅一族",
+                      @"FASHION 90S",@"潮90",nil];
     if (style/2<title.count) {
-        backgroundView.image =[UIImage imageNamed:[NSString stringWithFormat:@"source/room_titBg%d.png",style+1]];
+        backgroundView.image =[UIImage imageWithResource:[NSString stringWithFormat:@"source/room_titBg%d.png",style+1]];
         subTitleView.text=[title objectAtIndex:style*2+1];
         titleView.text = [title objectAtIndex:style*2];
         titleView.adjustsFontSizeToFitWidth=YES;

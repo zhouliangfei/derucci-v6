@@ -128,7 +128,7 @@ static sqlite3_stmt *statement;
             
         for (unsigned int i=0; i<len; i++)
         {
-            NSString *name = [NSMutableString stringWithUTF8String:sqlite3_column_name(statement,i)];
+            NSString *name = [NSString stringWithUTF8String:sqlite3_column_name(statement,i)];
 
             switch(sqlite3_column_type(statement, i))
             {

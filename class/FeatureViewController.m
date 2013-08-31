@@ -215,7 +215,7 @@
             
             HotsView *btn = [[[HotsView alloc] initWithFrame:CGRectMake(0, 0, 37, 36)] autorelease];
             [btn addTarget:self action:@selector(pointTouch:) forControlEvents:UIControlEventTouchUpInside];
-            [btn setImage:[UIImage imageNamed:@"source/feature_btn_doc.png"] forState:UIControlStateNormal];
+            [btn setImage:[UIImage imageWithResource:@"source/feature_btn_doc.png"] forState:UIControlStateNormal];
             [btn setTitle:[temp objectForKey:@"title"]];
             [btn setPosition:CGPointFromString([temp objectForKey:@"position"])];
             [btn setTag:i + 1];

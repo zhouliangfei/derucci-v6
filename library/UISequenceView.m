@@ -5,7 +5,9 @@
 //  Created by liangfei zhou on 12-2-12.
 //  Copyright (c) 2012年 __MyCompanyName__. All rights reserved.
 //
+#import "GUI.h"
 #import "UISequenceView.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation UISequenceViewCell
 
@@ -27,7 +29,9 @@
     {
         index = value;
         
-        cache = [[NSMutableArray alloc] init];
+        cache = [[UIView alloc] initWithFrame:CGRectZero];
+        [self addSubview:cache];
+        [cache setHidden:YES];
         
         imageView = [[UIImageView alloc] init];
         
@@ -51,6 +55,7 @@
     [super setFrame:frame];
     
     [imageView setFrame:self.bounds];
+    [cache setFrame:self.bounds];
 }
 
 -(void)dealloc
@@ -69,8 +74,7 @@
 @end
 
 //
-@interface UISequenceView()
-{
+@interface UISequenceView(){
     NSMutableArray *pointData;
     //
     int playSteep;
@@ -78,15 +82,9 @@
     int playBeginFrame;
     int playCurrentFrame;
 }
-
 - (void)displayPoint;
-
 - (void)displayImage;
-
 @end
-
-//
-#import <QuartzCore/QuartzCore.h>
 
 @implementation UISequenceView
 @synthesize currentFrame;
@@ -97,52 +95,34 @@
 @synthesize delegate;
 @synthesize loop;
 
--(id)initWithFrame:(CGRect)frame
-{
+-(id)initWithFrame:(CGRect)frame{
     self = [super initWithFrame:frame];
-    
-    if (self) 
-    {
+    if (self) {
         pointData = [[NSMutableArray alloc] init];
-        
         pointLayer = [[UIView alloc] initWithFrame:self.bounds];
-        
         [self addSubview:pointLayer];
     }
-    
     return self;
 }
 
--(id)initWithCoder:(NSCoder *)aDecoder
-{
+-(id)initWithCoder:(NSCoder *)aDecoder{
     self = [super initWithCoder:aDecoder];
-    
-    if (self) 
-    {
+    if (self) {
         pointData = [[NSMutableArray alloc] init];
-        
         pointLayer = [[UIView alloc] initWithFrame:self.bounds];
-        
         [self addSubview:pointLayer];
     }
-    
     return self;
 }
 
--(void)setLayerCount:(NSInteger)value
-{
+-(void)setLayerCount:(NSInteger)value{
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    
     [pointData removeAllObjects];
-    for (id item in pointLayer.subviews)
-    {
+    for (id item in pointLayer.subviews){
         [item removeFromSuperview];
     }
-
-    for (UISequenceViewCell *layerObj in self.subviews)
-    {
-        if ([layerObj isKindOfClass:[UISequenceViewCell class]])
-        {
+    for (UISequenceViewCell *layerObj in self.subviews){
+        if ([layerObj isKindOfClass:[UISequenceViewCell class]]){
             [layerObj removeFromSuperview];
         }
     }
@@ -161,19 +141,15 @@
     }
 }
 
--(void)setFrame:(CGRect)frame
-{
+-(void)setFrame:(CGRect)frame{
     [super setFrame:frame];
-
-    for (UIView *view in self.subviews)
-    {
+    for (UIView *view in self.subviews){
         [view setFrame:self.bounds];
-    }    
+    }
     [self displayPoint];
 }
 
--(void)dealloc
-{
+-(void)dealloc{
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     [pointData release];
     [pointLayer release];
@@ -205,8 +181,7 @@
     }
 }
 
--(void)playTimerInterval
-{
+-(void)playTimerInterval{
     playBeginFrame += playSteep;
     self.currentFrame = playBeginFrame;
     
@@ -217,160 +192,114 @@
     }
 }
 //
--(void)addPoint:(UIView*)point u:(NSString*)u v:(NSString*)v
-{
+-(void)addPoint:(UIView*)point u:(NSString*)u v:(NSString*)v{
     NSArray *tu = [u componentsSeparatedByString:@","];
-    
     NSArray *tv = [v componentsSeparatedByString:@","];
-
     [pointData addObject:[NSArray arrayWithObjects:point,tu,tv, nil]];
-    
     [pointLayer addSubview:point];
-    
-    //
+
     float tw = self.frame.size.width;
-    
     float th = self.frame.size.height;
-    
     id tx = [tu objectAtIndex:currentFrame];
-    
     id ty = [tv objectAtIndex:currentFrame];
-    
-    if ([tx isEqualToString:@"NaN"] || [ty isEqualToString:@"NaN"])
-    {
+    if ([tx isEqualToString:@"NaN"] || [ty isEqualToString:@"NaN"]){
         [point setHidden:YES];
-    }
-    else 
-    {
+    }else {
         [point setHidden:NO];
-        
         [point setCenter:CGPointMake([tx floatValue] * tw,[ty floatValue] * th)];
     }
 }
 
--(void)updata:(int)layer low:(NSString *)low high:(NSString*)high;
-{
+-(void)updata:(int)layer low:(NSString *)low high:(NSString*)high{
     if (totalFrame > 0) {
-        for (UISequenceViewCell *layerObj in self.subviews)
-        {
-            if ([layerObj isKindOfClass:[UISequenceViewCell class]] && layerObj.index == layer)
-            {
-                layerObj.file = nil;
-                
-                layerObj.path = high;
-                
-                [layerObj.cache removeAllObjects];
-                
-                if (low){
-                    for (uint ind=0; ind<totalFrame; ind++) {
-                        NSString *path = [NSString stringWithFormat:low,ind];
-                        UIImage *image = [UIImage imageWithContentsOfFile:path];
-                        
-                        UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
-                        [layerObj.cache addObject:imageView];
-                        [imageView release];
-                    }
+        for (UISequenceViewCell *layerObj in self.subviews){
+            if ([layerObj isKindOfClass:[UISequenceViewCell class]] && layerObj.index == layer){
+                for (UIView *view in layerObj.cache.subviews) {
+                    [view removeFromSuperview];
                 }
-                
-                [self.layer addAnimation:[CATransition animation] forKey:nil];
-                [self displayImage];
-                
+                layerObj.path = high;
+                layerObj.file = nil;
+                //
+                if (low){
+                    [GUI loadingForView:self visible:YES];
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(void){
+                        for (uint ind=0; ind<totalFrame; ind++) {
+                            NSString *path = [NSString stringWithFormat:low,ind];
+                            UIImage *image = [UIImage imageWithContentsOfFile:path];
+                            UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+                            [layerObj.cache addSubview:imageView];
+                            [imageView release];
+                        }
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [GUI loadingForView:self visible:NO];
+                            [self.layer addAnimation:[CATransition animation] forKey:nil];
+                            [self displayImage];
+                        });
+                    });
+                }else{
+                    [self.layer addAnimation:[CATransition animation] forKey:nil];
+                    [self displayImage];
+                }
                 return;
             }
         }
     }
 }
 
--(void)setCurrentFrame:(int)value
-{
-    if (totalFrame > 0)
-    {
-        if (loop) 
-        {
-            while (value < 0) 
-            {
+-(void)setCurrentFrame:(int)value{
+    if (totalFrame > 0){
+        if (loop) {
+            while (value < 0) {
                 value += totalFrame;
             }
-            
             currentFrame = value % totalFrame;
-        }
-        else 
-        {
+        }else{
             currentFrame = fmax(fmin(value,totalFrame-1),0); 
         }
-        
         [self displayPoint];
         [self displayImage];
     }
 }
 
--(void)setQuality:(UISequenceViewQuality)value
-{
-    if (totalFrame > 0)
-    {
+-(void)setQuality:(UISequenceViewQuality)value{
+    if (totalFrame > 0){
         quality = value;
         [self displayImage];
     }
 }
 
--(void)displayPoint
-{
+-(void)displayPoint{
     float tw = self.frame.size.width;
-    
     float th = self.frame.size.height;
-    
-    for (NSArray *temp in pointData)
-    {
+    for (NSArray *temp in pointData){
         UIImageView *point = [temp objectAtIndex:0];
-        
         NSArray *localX = [temp objectAtIndex:1];
-        
         NSArray *localY = [temp objectAtIndex:2];
-        
         id tx = [localX objectAtIndex:currentFrame];
-        
         id ty = [localY objectAtIndex:currentFrame];
-        
-        if ([tx isEqualToString:@"NaN"] || [ty isEqualToString:@"NaN"])
-        {
+        if ([tx isEqualToString:@"NaN"] || [ty isEqualToString:@"NaN"]){
             [point setHidden:YES];
-        }
-        else 
-        {
+        }else{
             [point setHidden:NO];
-            
             [point setCenter:CGPointMake([tx floatValue] * tw,[ty floatValue] * th)];
         }
     }
 }
 
--(void)displayImage
-{
-    for (UISequenceViewCell *layerObj in self.subviews)
-    {
-        if ([layerObj isKindOfClass:[UISequenceViewCell class]])
-        {
-            if (UISequenceViewQualityLow == quality)
-            {
-                if ([layerObj.cache count] > currentFrame)
-                {
-                    UIImageView *imageView = [layerObj.cache objectAtIndex:currentFrame];
-                    
+-(void)displayImage{
+    for (UISequenceViewCell *layerObj in self.subviews){
+        if ([layerObj isKindOfClass:[UISequenceViewCell class]]){
+            if (UISequenceViewQualityLow == quality){
+                if ([layerObj.cache.subviews count] > currentFrame){
+                    UIImageView *imageView = [layerObj.cache.subviews objectAtIndex:currentFrame];
                     layerObj.image = imageView.image;
-                    
                     layerObj.file = nil;
                 }
-            }
-            else 
-            {
-                if (layerObj.path)
-                {
-                    NSString *path = [NSString stringWithFormat:layerObj.path,currentFrame];
-                    
-                    if (![path isEqualToString:layerObj.file])
-                    {
+            }else{
+                if (layerObj.path){
+                    NSString *path = [NSString stringWithFormat:layerObj.path,currentFrame]; 
+                    if (![path isEqualToString:layerObj.file]){
                         layerObj.file = path;
-                        
                         layerObj.image = [UIImage imageWithContentsOfFile:path];
                     }
                 }

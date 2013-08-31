@@ -109,6 +109,7 @@
     }
 }
 - (void)enterFrame:(NSTimer*)timer {
+    //NSLog(@">>>>>>");
     int len = dotView.subviews.count;
     for (int i=0; i<len; i++) {
         UILockDotView *dot = [dotView.subviews objectAtIndex:i];

@@ -167,10 +167,10 @@
     [super setSelected:selected];
     if (selected) {
         [self setBackgroundColor:[UIColor colorWithHex:0xcb0f0f30]];
-        [iconView setImage:[UIImage imageNamed:@"source/btn_x.png"]];
+        [iconView setImage:[UIImage imageWithResource:@"source/btn_x.png"]];
     }else {
         [self setBackgroundColor:[UIColor clearColor]];
-        [iconView setImage:[UIImage imageNamed:@"source/btn_+.png"]];
+        [iconView setImage:[UIImage imageWithResource:@"source/btn_+.png"]];
     }
 }
 -(void)sortChild:(CGSize)size{
@@ -257,7 +257,7 @@ static float tweenValue;
 //
 +(id)buttonWithFrame:(CGRect)frame parent:(UIView*)parent normal:(NSString*)normal icon:(NSString*)icon title:(NSString*)title target:(id)target event:(SEL)event{
     UIButton *temp = [GUI buttonWithFrame:frame parent:parent normal:normal target:target event:event];
-    [temp setImage:[UIImage imageNamed:icon] forState:UIControlStateNormal];
+    [temp setImage:[UIImage imageWithResource:icon] forState:UIControlStateNormal];
     [temp setTitle:title forState:UIControlStateNormal];
     return temp;
 }

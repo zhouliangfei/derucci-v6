@@ -332,11 +332,14 @@
     
     [p release];
     NSLog(@"loadMainViewImages done");
-    //[self hideLoadingView];
-    [GUI loadingForView:self visible:NO];
-    isMainViewLoaded = TRUE;
     
+    
+    isMainViewLoaded = TRUE;
     mainView.hidden = TRUE;
+    //
+    indexStart = 0;
+    status = STATUS_A360;
+    
 }
 
 - (void)initMainView
@@ -416,12 +419,10 @@
     [p release];
         
     NSLog(@"isStartViewLoaded done");
-    indexStart = 0;
     status = STATUS_START;
     isStartViewLoaded = TRUE;
     startView.hidden = NO;
     [self performSelectorOnMainThread:@selector(startAnimation) withObject:nil waitUntilDone:NO];
-    
 }
 
 
@@ -536,7 +537,7 @@
         status = STATUS_NONE;
         
         [self initStartView];
-        [self initMainView];
+        
     }
     return self;
 }
@@ -546,7 +547,7 @@
 - (void) startAnimation 
 {
     [GUI loadingForView:self visible:NO];
-    //[self hideLoadingView];
+    [self initMainView];
     [self stopAnimation];
 	animationTimer = [[NSTimer scheduledTimerWithTimeInterval:0.024 target:self selector:@selector(animationLooper:) userInfo:nil repeats:YES] retain];
 }
@@ -567,19 +568,21 @@
             indexStart++;
         } else if (indexStart == A_ANIMATION_COUNT) {
             if (status==STATUS_START) {
-                status = STATUS_A360;
+                status=STATUS_NONE;
+                [GUI loadingForView:self visible:YES];
                 [GUI imageWithFrame:CGRectMake(376, 662, 271, 25) parent:self source:@"source/feature_tip_360.png"];
                 [GUI lableWithFrame:CGRectMake(0, 644, 1024, 11) parent:self text:@"左右拖动查看产品360度" font:[UIFont systemFontOfSize:12] color:[UIColor colorWithHex:0xaa9e7bff] align:1];
             }
-            
         }
-    }else {
+    }
+    if (status==STATUS_A360) {
         if (startView) {
             while ([[startView subviews] count]) {
                 [((UIView*)[[startView subviews] objectAtIndex:0] ) removeFromSuperview];
             }
             [startView removeFromSuperview];
             [startView release],startView = NULL;
+            [GUI loadingForView:self visible:NO];
         }
         
         mainView.hidden = FALSE;

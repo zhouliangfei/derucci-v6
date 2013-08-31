@@ -42,7 +42,7 @@
 -(id)JSONFragment{
     if ([NSJSONSerialization isValidJSONObject:self]){
         NSError *error = nil;
-        NSData *data = [NSJSONSerialization dataWithJSONObject:self options:NSJSONReadingMutableContainers error:&error];
+        NSData *data = [NSJSONSerialization dataWithJSONObject:self options:NSJSONWritingPrettyPrinted error:&error];
         if (nil==error){
             return [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
         }
@@ -131,6 +131,7 @@
         return nil;
     }
     if (sysctl(mib, 6, buf, &len, NULL, 0) < 0){
+        free(buf);
         return nil;
     }
 
@@ -258,7 +259,7 @@
             [[Utils rootViewController] pushViewController:viewController animated:NO];
             break;
     }
-    [viewController setModalTransitionStyle:animated];
+    [viewController setModalTransitionStyle:(UIModalTransitionStyle)animated];
     return viewController;
 }
 +(UIViewController*)popViewController:(UIViewController*)viewController animated:(UITransitionStyle)animated{
@@ -320,7 +321,7 @@
     if (viewControllers.count > 1) {
         UIViewController *curController = [viewControllers objectAtIndex:viewControllers.count-1];
         UIViewController *topController = [viewControllers objectAtIndex:viewControllers.count-2];
-        return [Utils popViewController:topController animated:curController.modalTransitionStyle];
+        return [Utils popViewController:topController animated:(UITransitionStyle)curController.modalTransitionStyle];
     }
     return nil;
 }

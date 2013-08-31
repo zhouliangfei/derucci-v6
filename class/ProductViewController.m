@@ -8,8 +8,9 @@
 #import "GUIExt.h"
 #import "Access.h"
 #import "UIFlipView.h"
-#import "UIPerspectView.h"
 #import "NavigateView.h"
+#import "UIPerspectView.h"
+#import "RoomViewController.h"
 #import "ProductViewController.h"
 
 //............................................................
@@ -334,7 +335,7 @@
     descriptionView = nil;
     sizeView = nil;
     if (style==0) {
-        rightView = [GUI viewWithFrame:CGRectMake(965, 74, 226, 694) parent:self.view];
+        rightView = [GUI viewWithFrame:CGRectMake(965, 74, 285, 694) parent:self.view];
         [GUI imageWithFrame:CGRectMake(59, 0, 226, 694) parent:rightView source:@"source/product_rigBase.png"];
         [GUI buttonWithFrame:CGRectMake(0, 34, 27, 28) parent:rightView normal:@"source/btn_open.png" target:self event:@selector(openTouch:)];
         [GUI buttonWithFrame:CGRectMake(96, 625, 45, 49) parent:rightView normal:@"source/product_icon_room.png" target:self event:@selector(roomTouch:)];
@@ -357,7 +358,7 @@
         [GUI imageWithFrame:CGRectMake(59, 512, 226, 1) parent:rightView source:@"source/line.png"];
         [GUI imageWithFrame:CGRectMake(59, 591, 226, 1) parent:rightView source:@"source/line.png"];
     }else {
-        rightView = [GUI viewWithFrame:CGRectMake(965, 74, 226, 694) parent:self.view];
+        rightView = [GUI viewWithFrame:CGRectMake(965, 74, 285, 694) parent:self.view];
         [GUI imageWithFrame:CGRectMake(59, 0, 226, 694) parent:rightView source:@"source/product_rigBase.png"];
         [GUI buttonWithFrame:CGRectMake(0, 34, 27, 28) parent:rightView normal:@"source/btn_open.png" target:self event:@selector(openTouch:)];
         [GUI buttonWithFrame:CGRectMake(153, 626, 38, 50) parent:rightView normal:@"source/product_icon_fav.png" target:self event:@selector(favTouch:)];
@@ -482,6 +483,7 @@
     for (UIView *view in cell.subviews) {
         [view removeFromSuperview];
     }
+    //
     NSString *filePath = [[source objectAtIndex:index] objectForKey:@"bigPhoto"];
     [GUI imageWithFrame:CGRectMake(0, 0, 1024, 768) parent:cell document:filePath];
     return cell;
@@ -499,7 +501,15 @@
     }
 }
 -(void)roomTouch:(UIButton*)sender{
+    id temp = [[source objectAtIndex:page] objectForKey:@"roomTypeId"];
+    id val = [Access getRoomsWithId:temp];
+    if (val) {
+        RoomViewController *room = (RoomViewController*)[Utils gotoWithName:@"RoomViewController" animated:UITransitionStyleCoverHorizontal];
+        room.source = [val lastObject];
+        //[room updataWall];
+    }
 }
 -(void)favTouch:(UIButton*)sender{
+    
 }
 @end

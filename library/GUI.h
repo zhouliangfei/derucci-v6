@@ -15,9 +15,14 @@
 @interface UIView(UIViewGUI)
 +(id)viewWithFrame:(CGRect)frame;
 @end
+//UIView
+@interface UIControl(UIControlGUI)
++(id)controlWithFrame:(CGRect)frame;
+@end
 //UIImage
 @interface UIImage(UIImageGUI)
 +(id)imageWithDocument:(NSString*)path;
++(id)imageWithResource:(NSString*)path;
 @end
 //UIImageView
 @interface UIImageView(UIImageViewGUI)
@@ -57,6 +62,8 @@
 +(id)loadingForView:(UIView*)view visible:(BOOL)visible;
 
 +(id)viewWithFrame:(CGRect)frame parent:(UIView*)parent;
+
++(id)controlWithFrame:(CGRect)frame parent:(UIView*)parent;
 
 +(id)tableViewWithFrame:(CGRect)frame parent:(UIView*)parent;
 

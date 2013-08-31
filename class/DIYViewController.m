@@ -19,7 +19,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         tagView=[GUI lableWithFrame:CGRectZero parent:self text:nil font:[UIFont fontWithName:@"Arial-ItalicMT" size:16] color:[UIColor whiteColor] align:1];
-        [self setBackgroundImage:[UIImage imageNamed:@"source/DIY_btn0.png"] forState:UIControlStateNormal];
+        [self setBackgroundImage:[UIImage imageWithResource:@"source/DIY_btn0.png"] forState:UIControlStateNormal];
         [self.titleLabel setFont:[UIFont boldSystemFontOfSize:11]];
         [self setSelected:NO];
         //

@@ -12,21 +12,23 @@
 
 //..................................................
 @interface HomeViewCell:UIButton{
-    UIImageView *iconView;
     int iconIndex;
+    UIImageView *iconView;
     NSMutableArray *iconImage;
-    CGSize initSize;
+    CGPoint initPosition;
 }
 @property(nonatomic,readonly) UIView *backgroundView;
--(void)setActive:(BOOL)active;
+@property(nonatomic,readonly) BOOL active;
+-(void)setContentFrame:(CGRect)frame;
 @end
 
 @implementation HomeViewCell
 @synthesize backgroundView;
+@synthesize active;
+
 -(id)initWithFrame:(CGRect)frame{
     self = [super initWithFrame:frame];
     if (self) {
-        initSize = frame.size;
         self.layer.cornerRadius = 10.0;
         self.layer.masksToBounds = YES;
         //
@@ -36,7 +38,7 @@
         [self addSubview:backgroundView];
         //
         iconImage = [[NSMutableArray array] retain];
-        iconView = [[UIImageView alloc] initWithFrame:CGRectZero];
+        iconView = [[UIImageView alloc] initWithFrame:self.bounds];
         [iconView setContentMode:UIViewContentModeScaleToFill];
         [self addSubview:iconView];
     }
@@ -51,7 +53,6 @@
         }
         //
         iconIndex = 0;
-        [self setIconSize:self.frame.size];
         [self nextImage:nil];
     }
 }
@@ -65,19 +66,43 @@
         iconIndex%=iconImage.count;
     }
 }
--(void)setActive:(BOOL)active{
+-(void)setActive:(BOOL)value{
+    active = value;
+    if (self.superview) {
+        if (active) {
+            CGFloat max = 0.f;
+            for (UIView *view in self.superview.subviews) {
+                max = MAX(view.layer.zPosition, max);
+            }
+            initPosition = self.center;
+            self.layer.zPosition = max+512.0;
+            [self.superview bringSubviewToFront:self];
+        }
+        //
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDidStopSelector:@selector(activeAnimationDid)];
+        [UIView setAnimationDelegate:self];
+        if (active) {
+            backgroundView.alpha = 1.0;
+            iconView.alpha = 0.0;
+        }else {
+            [UIView setAnimationDuration:0.4];
+            self.layer.transform = CATransform3DIdentity;
+            self.center=initPosition;
+        }
+        [UIView commitAnimations];
+    }
+}
+-(void)activeAnimationDid{
     [UIView beginAnimations:nil context:nil];
     if (active) {
-        self.layer.transform = CATransform3DMakeRotation(M_PI, 0, 1, 0);
-        self.layer.cornerRadius = 0.0;
-        self.layer.zPosition = INT_MAX;
-        self.backgroundView.alpha = 1.0;
-        iconView.alpha = 0.0;
+        [UIView setAnimationDuration:0.4];
+        self.layer.transform = CATransform3DScale(CATransform3DMakeRotation(M_PI, 0, 1, 0),self.superview.frame.size.width/self.frame.size.width,self.superview.frame.size.height/self.frame.size.height,1);
+        self.center=self.superview.center;
+        self.layer.cornerRadius = 0;
     }else {
-        self.layer.transform = CATransform3DMakeRotation(0, 0, 1, 0);
-        self.layer.cornerRadius = 10.0;
-        self.layer.zPosition = 0;
-        self.backgroundView.alpha = 0.0;
+        self.layer.cornerRadius = 10;
+        backgroundView.alpha = 0.0;
         iconView.alpha = 1.0;
     }
     [UIView commitAnimations];
@@ -90,19 +115,8 @@
     [iconView release];
     [super dealloc];
 }
--(void)setFrame:(CGRect)frame{
-    [super setFrame:frame];
-    [self setIconSize:frame.size];
-    [backgroundView setFrame:self.bounds];
-}
--(void)setIconSize:(CGSize)size{
-    if (iconImage.count>0) {
-        if (size.width > size.height) {
-            [iconView setFrame:CGRectMake(0, 0, 243.0*size.width/initSize.width, size.height)];
-        }else {
-            [iconView setFrame:CGRectMake(0, 0, size.width, 276.0*size.height/initSize.height)];
-        }
-    }
+-(void)setContentFrame:(CGRect)frame{
+    [iconView setFrame:frame];
 }
 @end
 
@@ -138,11 +152,13 @@
         
         HomeViewCell *cell = [[HomeViewCell alloc] initWithFrame:CGRectOffset(rect, 1024, (i%2==0 ? -50 : 50))];
         [cell addTarget:self action:@selector(cellTouch:) forControlEvents:UIControlEventTouchUpInside];
-        [cell setBackgroundImage:[self blurWithImage:[UIImage imageNamed:path]] forState:UIControlStateNormal];
+        [cell setBackgroundImage:[self blurWithImage:[UIImage imageWithResource:path]] forState:UIControlStateNormal];
         if (i==0) {
+            [cell setContentFrame:CGRectMake(0, 0, 243.0, rect.size.height)];
             [cell setImages:[Access getPhotoWithModel:[NSNumber numberWithInt:1]]];
         }
         if (i==5) {
+            [cell setContentFrame:CGRectMake(0, 0, rect.size.width, 277.0)];
             [cell setImages:[Access getPhotoWithModel:[NSNumber numberWithInt:2]]];
         }
         [self.view addSubview:cell];
@@ -152,7 +168,7 @@
         [UIView animateWithDuration:0.6 delay:0.15 * i options:UIViewAnimationOptionCurveEaseInOut animations:^{
             [cell setFrame:rect];
         } completion:^(BOOL finished) {
-            [cell setBackgroundImage:[UIImage imageNamed:path] forState:UIControlStateNormal];
+            [cell setBackgroundImage:[UIImage imageWithResource:path] forState:UIControlStateNormal];
             [cell.backgroundView setBackgroundColor:[UIColor colorWithHex:curCol]];
         }];
     }
@@ -170,60 +186,51 @@
 }
 
 -(void)viewDidAppear:(BOOL)animated{
-    [super viewDidAppear:animated];
-    
+    [NavigateController shareInstanceInView:self.view];
     if ([GUIExt extendsView]) {
         [GUIExt extendsView].animationImages=[Access ExtendsImages];
     }
-    
-    [NavigateController shareInstanceInView:self.view];
-    [self performSelector:@selector(resetCurrentCell:) withObject:nil afterDelay:0.4];
-}
--(void)resetCurrentCell:(id)sender{
+    //
     if (currentCell) {
-        CGRect rect = [[cellFrame objectAtIndex:currentCell.tag-1] CGRectValue];
-        [currentCell setActive:NO];
-        [UIView animateWithDuration:0.4 animations:^{
-            currentCell.frame = rect;
-        }];
+        [self performSelector:@selector(viewDidAppearDid:) withObject:currentCell afterDelay:0.4];
+        currentCell = nil;
     }
-    currentCell = nil;
+}
+-(void)viewDidAppearDid:(id)sender{
+    [sender setActive:NO];
 }
 
 //.............................................................
 -(void)cellTouch:(HomeViewCell*)sender{
     if (sender.tag==6) return;
-    //
     currentCell = sender;
-    [currentCell setActive:YES];
-    [self.view addSubview:currentCell];
-    
-    [UIView animateWithDuration:0.4 animations:^{
-        currentCell.frame = CGRectMake(0, 0, 1024, 768);
-    } completion:^(BOOL finished) {
-        switch (currentCell.tag) {
-            case 1:
-                [Utils gotoWithName:@"AboutViewController" animated:UITransitionStyleDissolve];
-                break;
-            case 2:
-                [Utils gotoWithName:@"RoomsViewController" animated:UITransitionStyleDissolve];
-                break; 
-            case 3:
-                [Utils gotoWithName:@"ProductsViewController" animated:UITransitionStyleDissolve];
-                break;
-            case 4:
-                [Utils gotoWithName:@"FeaturesViewController" animated:UITransitionStyleDissolve];
-                break;
-            case 5:
-                [Utils gotoWithName:@"VirtualViewController" animated:UITransitionStyleDissolve];
-                break;
-            case 6:
-                [Utils gotoWithName:@"DIYViewController" animated:UITransitionStyleDissolve];
-                break;
-            default:
-                break;
-        }
-    }];
+    //
+    [sender setActive:YES];
+    [self performSelector:@selector(cellTouchDid:) withObject:sender afterDelay:0.4];
+}
+-(void)cellTouchDid:(UIView*)sender{
+    switch (sender.tag) {
+        case 1:
+            [Utils gotoWithName:@"AboutViewController" animated:UITransitionStyleDissolve];
+            break;
+        case 2:
+            [Utils gotoWithName:@"RoomsViewController" animated:UITransitionStyleDissolve];
+            break;
+        case 3:
+            [Utils gotoWithName:@"ProductsViewController" animated:UITransitionStyleDissolve];
+            break;
+        case 4:
+            [Utils gotoWithName:@"FeaturesViewController" animated:UITransitionStyleDissolve];
+            break;
+        case 5:
+            [Utils gotoWithName:@"VirtualViewController" animated:UITransitionStyleDissolve];
+            break;
+        case 6:
+            [Utils gotoWithName:@"DIYViewController" animated:UITransitionStyleDissolve];
+            break;
+        default:
+            break;
+    }
 }
 -(UIImage*)blurWithImage:(UIImage*)image {
     float weight[5] = {0.1270270270, 0.1945945946, 0.1216216216, 0.0540540541, 0.0162162162};

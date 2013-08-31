@@ -140,7 +140,7 @@
         {
             NSLog(@"%@",filePath);
             
-            CFReadStreamRef readStream = CFReadStreamCreateWithFTPURL(kCFAllocatorDefault, (__bridge CFURLRef)[NSURL URLWithString:filePath]);
+            CFReadStreamRef readStream = CFReadStreamCreateWithFTPURL(kCFAllocatorDefault, ( CFURLRef)[NSURL URLWithString:filePath]);
             
             if (readStream)
             {
@@ -150,7 +150,7 @@
                 
                 current = [self getSize:savePath];
                 
-                input = [(__bridge NSInputStream*)readStream retain];
+                input = [( NSInputStream*)readStream retain];
                 
                 [input setProperty:[NSNumber numberWithBool:YES] forKey:(NSString*)kCFStreamPropertyFTPUsePassiveMode];
                 
@@ -181,13 +181,12 @@
                     [self closeWithErrorEvent:FTPErrorUSER];
                     
                     return;
+                }
+                if (NO == passPro)
+                {
+                    [self closeWithErrorEvent:FTPErrorPASS];
                     
-                    if (NO == passPro)
-                    {
-                        [self closeWithErrorEvent:FTPErrorPASS];
-                        
-                        return;
-                    }
+                    return;
                 }
             }
         }
@@ -274,11 +273,11 @@
             {
                 if (nil == output)
                 {
-                    CFWriteStreamRef writeStream = CFWriteStreamCreateWithFile(kCFAllocatorDefault, (__bridge CFURLRef)[NSURL fileURLWithPath:savePath]);
+                    CFWriteStreamRef writeStream = CFWriteStreamCreateWithFile(kCFAllocatorDefault, ( CFURLRef)[NSURL fileURLWithPath:savePath]);
                     
                     if (writeStream)
                     {
-                        output = [(__bridge NSOutputStream*)writeStream retain];
+                        output = [( NSOutputStream*)writeStream retain];
                         
                         [output setProperty:[NSNumber numberWithBool:YES] forKey:(NSString*)kCFStreamPropertyAppendToFile];
 

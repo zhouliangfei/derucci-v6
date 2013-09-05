@@ -180,14 +180,17 @@
     [[NSNotificationCenter defaultCenter] addObserver:self  selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self  selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     //
+    id userName = [[NSUserDefaults standardUserDefaults] objectForKey:@"charUser"];
+    id passWord = [[NSUserDefaults standardUserDefaults] objectForKey:@"charPass"];
+    //
     [self.view.layer addAnimation:[CATransition animation] forKey:nil];
     [target removeFromSuperview];
     
-    nameView = [GUI textFieldWithFrame:CGRectMake(489, 448, 211, 46) parent:inputView text:nil font:[UIFont systemFontOfSize:16] color:[UIColor whiteColor] align:0 panding:5];
+    nameView = [GUI textFieldWithFrame:CGRectMake(489, 448, 211, 46) parent:inputView text:userName font:[UIFont systemFontOfSize:16] color:[UIColor whiteColor] align:0 panding:5];
     [nameView setBackground:[UIImage imageNamed:@"source/login_inputBase.png"]];
     [nameView setPlaceholder:@"USERNAME"];
     
-    passView = [GUI textFieldWithFrame:CGRectMake(703, 448, 211, 46) parent:inputView text:nil font:[UIFont systemFontOfSize:16] color:[UIColor whiteColor] align:0 panding:5];
+    passView = [GUI textFieldWithFrame:CGRectMake(703, 448, 211, 46) parent:inputView text:passWord font:[UIFont systemFontOfSize:16] color:[UIColor whiteColor] align:0 panding:5];
     [passView setBackground:[UIImage imageNamed:@"source/login_inputBase.png"]];
     [passView setPlaceholder:@"PASSWORD"];
     [passView setSecureTextEntry:YES];
@@ -201,6 +204,10 @@
             if ([temp isKindOfClass:[NSError class]]){
                 [self showError:((NSError*)temp).localizedDescription];
             } else{
+                [[NSUserDefaults standardUserDefaults] setObject:nameView.text forKey:@"charUser"];
+                [[NSUserDefaults standardUserDefaults] setObject:passView.text forKey:@"charPass"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                //
                 [Utils gotoWithName:@"HomeViewController" animated:UITransitionStyleCoverHorizontal];
             }
         }else {

@@ -217,7 +217,7 @@
     [GUI imageWithFrame:CGRectMake(0, 0, 1024, 768) parent:self.view source:@"source/background.png"];
 	
     sequence = [[UISequenceView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)];
-    [sequence setLayerCount:2];
+    //[sequence setLayerCount:2];
     [sequence setTotalFrame:25];
     [self.view addSubview:sequence];
     
@@ -303,9 +303,28 @@
 -(void)updataFloor{
     NSDictionary *path = [Access getPathWithRoomId:[source objectForKey:@"id"] wallId:[NSNumber numberWithInt:wallId] floorId:[NSNumber numberWithInt:floorId]];
     if (path) {
-        NSString *low = [Utils pathForDocument:[[path objectForKey:@"files"] stringByAppendingPathComponent:@"s%d.png"]];
         NSString *high = [Utils pathForDocument:[[path objectForKey:@"files"] stringByAppendingPathComponent:@"%d.png"]];
-        [sequence updata:0 low:low high:high];
+        UISequenceViewCell *cell = [sequence childAtIndex:1];
+        //
+        if (NO==[cell.path isEqualToString:high]) {
+            [GUI loadingForView:self.view visible:YES];
+            NSString *low = [Utils pathForDocument:[[path objectForKey:@"files"] stringByAppendingPathComponent:@"s%d.png"]];
+            //
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(void){
+                for (uint ind=0; ind<sequence.totalFrame; ind++) {
+                    NSString *path = [NSString stringWithFormat:low,ind];
+                    UIImage *image = [UIImage imageWithContentsOfFile:path];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [cell cacheAtFrame:ind image:image];
+                    });
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [GUI loadingForView:self.view visible:NO];
+                    [cell setPath:high];
+                    [sequence layoutSubviews];
+                });
+            });
+        }
     }
     
     [self updataProduct];
@@ -327,9 +346,29 @@
 -(void)updataProductColor{
     NSDictionary *proPath = [Access getPathWithProductId:[NSNumber numberWithInt:productId] colorId:[NSNumber numberWithInt:productColorId]];
     if (proPath) {
-        NSString *low = [Utils pathForDocument:[[proPath objectForKey:@"files"] stringByAppendingPathComponent:@"s%d.png"]];
         NSString *high = [Utils pathForDocument:[[proPath objectForKey:@"files"] stringByAppendingPathComponent:@"%d.png"]];
-        [sequence updata:1 low:low high:high];
+        UISequenceViewCell *cell = [sequence childAtIndex:2];
+        //
+        NSLog(@"%@",cell.path);
+        if (NO==[cell.path isEqualToString:high]) {
+            [GUI loadingForView:self.view visible:YES];
+            NSString *low = [Utils pathForDocument:[[proPath objectForKey:@"files"] stringByAppendingPathComponent:@"s%d.png"]];
+            //
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(void){
+                for (uint ind=0; ind<sequence.totalFrame; ind++) {
+                    NSString *path = [NSString stringWithFormat:low,ind];
+                    UIImage *image = [UIImage imageWithContentsOfFile:path];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [cell cacheAtFrame:ind image:image];
+                    });
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [GUI loadingForView:self.view visible:NO];
+                    [cell setPath:high];
+                    [sequence layoutSubviews];
+                });
+            });
+        }
     }
     //这里更新外屏
     if ([GUIExt extendsView]) {
@@ -350,7 +389,7 @@
     [self removePopView];
     [self resetButton:nil];
 }
--(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
+/*-(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
     if (sequence.userInteractionEnabled) {
         [sequence.pointLayer setHidden:YES];
         UITouch *touch = [touches anyObject];
@@ -374,7 +413,7 @@
         [sequence.pointLayer setHidden:NO];
         sequence.quality = UISequenceViewQualityHigh;
     }
-}
+}*/
 
 //弹出部分
 -(void)removePopView{

@@ -13,36 +13,24 @@
 -(void)playToFinish:(UISequenceView*)sequenceView;
 @end
 
-//
-@interface UISequenceViewCell : UIView{
-    UIImageView *imageView;
-}
-@property(nonatomic,readonly) NSInteger index;
+//**************************************************************
+@interface UISequenceViewCell : UIView
 @property(nonatomic,retain) NSString *path;
-@property(nonatomic,retain) NSString *file;
-@property(nonatomic,retain) UIView *cache;
-@property(nonatomic,assign) UIImage *image;
--(id)initWithIndex:(uint)value;
+@property(nonatomic,readonly) UIImageView *imageView;
+-(UIImage*)cacheAtFrame:(uint)frame image:(UIImage*)image;
+-(UIImage*)cacheAtFrame:(uint)frame;
+-(void)clearCache;
 @end
 
-//
-enum {
-    UISequenceViewQualityLow,
-    UISequenceViewQualityHigh
-};
-typedef NSInteger UISequenceViewQuality;
-
-//
+//**************************************************************
 @interface UISequenceView : UIView
 @property(nonatomic,assign) BOOL loop;
-@property(nonatomic,assign) NSInteger layerCount;
 @property(nonatomic,assign) NSInteger totalFrame;
 @property(nonatomic,assign) NSInteger currentFrame;
 @property(nonatomic,readonly) UIView *pointLayer;
-@property(nonatomic,assign) UISequenceViewQuality quality;
 @property(nonatomic,assign) id <UISequenceViewDelegate> delegate;
 
--(void)updata:(int)layer low:(NSString *)low high:(NSString*)high;
+-(id)childAtIndex:(uint)index;
 -(void)addPoint:(UIView*)point u:(NSString*)u v:(NSString*)v;
 -(void)playTo:(int)value;
 @end

@@ -201,12 +201,26 @@
     NSString *high = [Utils pathForDocument:[sequence objectForKey:@"high"]];
     NSInteger count = [[sequence objectForKey:@"count"] integerValue];
     
-    [sequenceView setLayerCount:1];
     [sequenceView setLoop:YES];
     [sequenceView setTotalFrame:count];
-    [sequenceView updata:0 low:low high:high];
-    [sequenceView setCurrentFrame:frame];
-    
+    //
+    [GUI loadingForView:self.view visible:YES];
+    UISequenceViewCell *cell = [sequenceView childAtIndex:1];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(void){
+        cell.path = high;
+        for (uint ind=0; ind<sequenceView.totalFrame; ind++) {
+            NSString *path = [NSString stringWithFormat:low,ind];
+            UIImage *image = [UIImage imageWithContentsOfFile:path];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [cell cacheAtFrame:ind image:image];
+            });
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [GUI loadingForView:self.view visible:NO];
+            [sequenceView setCurrentFrame:frame];
+        });
+    });
+    //
     id pointSource = [newSource objectForKey:@"point"];
     if (pointSource){
         int len = [pointSource count];
@@ -222,28 +236,5 @@
             [sequenceView addPoint:btn u:[temp objectForKey:@"u"] v:[temp objectForKey:@"v"]];
         }
     }
-}/*
--(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
-    [sequenceView.pointLayer setHidden:YES];
-    UITouch *touch = [touches anyObject];
-    CGPoint pre = [touch locationInView:self.view]; 
-    CGPoint nex = [touch previousLocationInView:self.view];
-    
-    if (abs(pre.x-nex.x)>0 && abs(pre.x-nex.x)>abs(pre.y-nex.y)){
-        if (sequenceView.quality == UISequenceViewQualityHigh) {
-            sequenceView.quality = UISequenceViewQualityLow;
-        } 
-        if (pre.x-nex.x>0) {
-            sequenceView.currentFrame++;
-        }else {
-            sequenceView.currentFrame--;
-        }
-    }
 }
--(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
-    [sequenceView.pointLayer setHidden:NO];
-    if (sequenceView.userInteractionEnabled){
-        sequenceView.quality = UISequenceViewQualityHigh;
-    }
-}*/
 @end

@@ -177,37 +177,43 @@
     [self makePanoView:dat];
 }
 -(void)makePanoView:(id)data{
-    PLView *pano = [[PLView alloc] initWithFrame:panoView.bounds];
-    [pano setIsDeviceOrientationEnabled:NO];
-	[pano setIsAccelerometerEnabled:NO];
-    [pano setType:PLViewTypeCubeFaces];
-    [pano addCubeTexture:[self getTexture:[data objectForKey:@"path"]]];
-    [pano.camera setRotation:PLRotationMake(tilt, pan, 0)];
-    [pano setDelegate:self];
-    [pano setAlpha:0.0f];
-    [pano drawView];
-    [panoView addSubview:pano];
-    [pano release];
-    //
-    pan = 0.0f;
-    tilt = 0.0f;
-    //生成热点
-    for (id pt in [data objectForKey:@"point"]){
-        PLButton *btn = [pano addPointWithImage:[UIImage imageWithResource:@""]];
-        btn.u = [[pt objectForKey:@"u"] floatValue];
-        btn.v = [[pt objectForKey:@"v"] floatValue];
-        btn.data = pt;
-    }
-    //
-    [UIView animateWithDuration:0.4 delay:0 options:UIViewAnimationOptionCurveLinear animations:^(){
-        pano.alpha = 1.0f;
-    } completion:^(BOOL finished){
-        for (UIView *item in panoView.subviews){
-            if ([item isKindOfClass:[PLView class]] && item != pano) {
-                [item removeFromSuperview];
-            }
+    [GUI loadingForView:self.view visible:YES];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(void){
+        PLView *pano = [[PLView alloc] initWithFrame:panoView.bounds];
+        [pano setIsDeviceOrientationEnabled:NO];
+        [pano setIsAccelerometerEnabled:NO];
+        [pano setType:PLViewTypeCubeFaces];
+        [pano addCubeTexture:[self getTexture:[data objectForKey:@"path"]]];
+        [pano.camera setRotation:PLRotationMake(tilt, pan, 0)];
+        [pano setDelegate:self];
+        //生成热点
+        for (id pt in [data objectForKey:@"point"]){
+            PLButton *btn = [pano addPointWithImage:[UIImage imageWithResource:@""]];
+            btn.u = [[pt objectForKey:@"u"] floatValue];
+            btn.v = [[pt objectForKey:@"v"] floatValue];
+            btn.data = pt;
         }
-    }];
+        //
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [GUI loadingForView:self.view visible:NO];
+            [panoView addSubview:pano];
+            [pano setAlpha:0.0f];
+            [pano drawView];
+            [pano release];
+            pan = 0.0f;
+            tilt = 0.0f;
+            //
+            [UIView animateWithDuration:0.4 delay:0 options:UIViewAnimationOptionCurveLinear animations:^(){
+                pano.alpha = 1.0f;
+            } completion:^(BOOL finished){
+                for (UIView *item in panoView.subviews){
+                    if ([item isKindOfClass:[PLView class]] && item != pano) {
+                        [item removeFromSuperview];
+                    }
+                }
+            }];
+        });
+    });
 }
 -(id)getTexture:(NSString*)dir{
     NSMutableDictionary *texture = [NSMutableDictionary dictionary];

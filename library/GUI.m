@@ -23,6 +23,14 @@
     UIView *temp = [[UIView alloc] initWithFrame:frame];
     return [temp autorelease];
 }
+-(id)convertImage{
+    UIGraphicsBeginImageContext(self.frame.size);
+    [self.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *tempImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return tempImage;
+}
 @end
 //UIControl
 @implementation UIControl(UIControlGUI)

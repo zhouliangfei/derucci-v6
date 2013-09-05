@@ -14,6 +14,7 @@
 //UIView
 @interface UIView(UIViewGUI)
 +(id)viewWithFrame:(CGRect)frame;
+-(id)convertImage;
 @end
 //UIView
 @interface UIControl(UIControlGUI)

@@ -9,72 +9,72 @@
 #import "UISequenceView.h"
 #import <QuartzCore/QuartzCore.h>
 
+//**************************************************************
+@interface UISequenceViewCell(){
+    NSMutableDictionary *frameCache;
+}
+@property(nonatomic,retain) NSString *file;
+@end
+//
 @implementation UISequenceViewCell
-
-@synthesize cache;
-
+@synthesize imageView;
 @synthesize path;
-
 @synthesize file;
 
-@synthesize index;
-
-@dynamic image;
-
--(id)initWithIndex:(uint)value
-{
-    self = [super initWithFrame:CGRectZero];
-    
-    if (self) 
-    {
-        index = value;
-        
-        cache = [[UIView alloc] initWithFrame:CGRectZero];
-        [self addSubview:cache];
-        [cache setHidden:YES];
-        
-        imageView = [[UIImageView alloc] init];
-        
+-(id)initWithFrame:(CGRect)frame{
+    self = [super initWithFrame:frame];
+    if (self) {
+        frameCache = [[NSMutableDictionary alloc] init];
+        //
+        imageView = [[UIImageView alloc] initWithFrame:frame];
         [imageView setContentMode:UIViewContentModeScaleAspectFit];
-        
         [self addSubview:imageView];
     }
-    
     return self;
 }
-
-//
--(void)setImage:(UIImage *)image
-{
-    imageView.image = image;
-}
-
-//
--(void)setFrame:(CGRect)frame
-{
-    [super setFrame:frame];
-    
-    [imageView setFrame:self.bounds];
-    [cache setFrame:self.bounds];
-}
-
--(void)dealloc
-{
+-(void)dealloc{
     [file release];
-    
     [path release];
-    
-    [cache release];
-    
     [imageView release];
-
+    [frameCache release];
     [super dealloc];
 }
-
+-(void)setFrame:(CGRect)frame{
+    [super setFrame:frame];
+    [imageView setFrame:self.bounds];
+}
+-(UIImage*)cacheAtFrame:(uint)frame image:(UIImage*)image{
+    id key = [NSNumber numberWithInt:frame];
+    UIImageView *tempImage = [frameCache objectForKey:key];
+    if (nil == tempImage) {
+        tempImage = [[[UIImageView alloc] initWithFrame:self.bounds] autorelease];
+        [tempImage setHidden:YES];
+        [self addSubview:tempImage];
+        [frameCache setObject:tempImage forKey:key];
+    }
+    if (image) {
+        [tempImage setImage:image];
+    }
+    [self setFile:nil];
+    return [tempImage image];
+}
+-(UIImage*)cacheAtFrame:(uint)frame{
+    return [self cacheAtFrame:frame image:nil];
+}
+-(void)clearCache{
+    for (UIView *view in [frameCache allValues]) {
+        [view removeFromSuperview];
+    }
+    [self setPath:nil];
+    [self setFile:nil];
+    [imageView setImage:nil];
+    [frameCache removeAllObjects];
+}
 @end
 
-//
+//**************************************************************
 @interface UISequenceView(){
+    BOOL isTouche;
     NSMutableArray *pointData;
     //
     int playSteep;
@@ -82,22 +82,19 @@
     int playBeginFrame;
     int playCurrentFrame;
 }
-- (void)displayPoint;
-- (void)displayImage;
 @end
 
 @implementation UISequenceView
 @synthesize currentFrame;
 @synthesize totalFrame;
-@synthesize layerCount;
 @synthesize pointLayer;
-@synthesize quality;
 @synthesize delegate;
 @synthesize loop;
 
 -(id)initWithFrame:(CGRect)frame{
     self = [super initWithFrame:frame];
     if (self) {
+        totalFrame = 1;
         pointData = [[NSMutableArray alloc] init];
         pointLayer = [[UIView alloc] initWithFrame:self.bounds];
         [self addSubview:pointLayer];
@@ -108,6 +105,7 @@
 -(id)initWithCoder:(NSCoder *)aDecoder{
     self = [super initWithCoder:aDecoder];
     if (self) {
+        totalFrame = 1;
         pointData = [[NSMutableArray alloc] init];
         pointLayer = [[UIView alloc] initWithFrame:self.bounds];
         [self addSubview:pointLayer];
@@ -115,38 +113,13 @@
     return self;
 }
 
--(void)setLayerCount:(NSInteger)value{
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    [pointData removeAllObjects];
-    for (id item in pointLayer.subviews){
-        [item removeFromSuperview];
-    }
-    for (UISequenceViewCell *layerObj in self.subviews){
-        if ([layerObj isKindOfClass:[UISequenceViewCell class]]){
-            [layerObj removeFromSuperview];
-        }
-    }
-    
-    loop = false;
-    totalFrame = 0;
-    currentFrame = 0;
-    quality = UISequenceViewQualityHigh;
-    
-    layerCount = value;
-    for (uint i=0; i<layerCount; i++){
-        UISequenceViewCell *layerObj = [[UISequenceViewCell alloc] initWithIndex:i];
-        [self insertSubview:layerObj atIndex:i];        
-        [layerObj setFrame:self.bounds];        
-        [layerObj release];
-    }
-}
-
 -(void)setFrame:(CGRect)frame{
     [super setFrame:frame];
     for (UIView *view in self.subviews){
-        [view setFrame:self.bounds];
+        if (view==pointLayer || [view isKindOfClass:[UISequenceViewCell class]]){
+            [view setFrame:self.bounds];
+        }
     }
-    [self displayPoint];
 }
 
 -(void)dealloc{
@@ -155,7 +128,7 @@
     [pointLayer release];
     [super dealloc];
 }
-//
+//动画
 -(void)playTo:(int)value{
     if(totalFrame > 0){
         playEndFrame = value % totalFrame;
@@ -173,7 +146,6 @@
                 }
             }
             playSteep = (playEndFrame > playBeginFrame ? 1 : -1);
-            [self setQuality:UISequenceViewQualityLow];
             [self playTimerInterval];
         }else {
             [delegate playToFinish:self];
@@ -186,10 +158,13 @@
     self.currentFrame = playBeginFrame;
     
     if (playBeginFrame!=playEndFrame){
+        isTouche=YES;
         [self performSelector:@selector(playTimerInterval) withObject:nil afterDelay:0.024];
     }else {
+        isTouche=NO;
         [delegate playToFinish:self];
     }
+    [self layoutSubviews];
 }
 //
 -(void)addPoint:(UIView*)point u:(NSString*)u v:(NSString*)v{
@@ -210,102 +185,93 @@
     }
 }
 
--(void)updata:(int)layer low:(NSString *)low high:(NSString*)high{
-    if (totalFrame > 0) {
-        for (UISequenceViewCell *layerObj in self.subviews){
-            if ([layerObj isKindOfClass:[UISequenceViewCell class]] && layerObj.index == layer){
-                for (UIView *view in layerObj.cache.subviews) {
-                    [view removeFromSuperview];
-                }
-                layerObj.path = high;
-                layerObj.file = nil;
-                //
-                if (low){
-                    [GUI loadingForView:self visible:YES];
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(void){
-                        for (uint ind=0; ind<totalFrame; ind++) {
-                            NSString *path = [NSString stringWithFormat:low,ind];
-                            UIImage *image = [UIImage imageWithContentsOfFile:path];
-                            UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
-                            [layerObj.cache addSubview:imageView];
-                            [imageView release];
-                        }
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            [GUI loadingForView:self visible:NO];
-                            [self.layer addAnimation:[CATransition animation] forKey:nil];
-                            [self displayImage];
-                        });
-                    });
-                }else{
-                    [self.layer addAnimation:[CATransition animation] forKey:nil];
-                    [self displayImage];
-                }
-                return;
+-(id)childAtIndex:(uint)index{
+    if (index>0) {
+        UISequenceViewCell *layerObj = (UISequenceViewCell*)[self viewWithTag:index];
+        if (nil == layerObj) {
+            layerObj = [[[UISequenceViewCell alloc] initWithFrame:self.bounds] autorelease];
+            [layerObj setTag:index];
+        }else{
+            [layerObj setFrame:self.bounds];
+        }
+        [layerObj setUserInteractionEnabled:NO];
+        [self insertSubview:layerObj atIndex:index];
+        return layerObj;
+    }
+    return nil;
+}
+-(void)layoutSubviews{
+    [super layoutSubviews];
+    //
+    if (!pointLayer.hidden) {
+        float tw = self.frame.size.width;
+        float th = self.frame.size.height;
+        for (NSArray *temp in pointData){
+            UIView *point = [temp objectAtIndex:0];
+            NSArray *localX = [temp objectAtIndex:1];
+            NSArray *localY = [temp objectAtIndex:2];
+            id tx = [localX objectAtIndex:currentFrame];
+            id ty = [localY objectAtIndex:currentFrame];
+            if ([tx isEqualToString:@"NaN"] || [ty isEqualToString:@"NaN"]){
+                [point setHidden:YES];
+            }else{
+                [point setHidden:NO];
+                [point setCenter:CGPointMake([tx floatValue] * tw,[ty floatValue] * th)];
             }
         }
     }
-}
-
--(void)setCurrentFrame:(int)value{
-    if (totalFrame > 0){
-        if (loop) {
-            while (value < 0) {
-                value += totalFrame;
-            }
-            currentFrame = value % totalFrame;
-        }else{
-            currentFrame = fmax(fmin(value,totalFrame-1),0); 
-        }
-        [self displayPoint];
-        [self displayImage];
-    }
-}
-
--(void)setQuality:(UISequenceViewQuality)value{
-    if (totalFrame > 0){
-        quality = value;
-        [self displayImage];
-    }
-}
-
--(void)displayPoint{
-    float tw = self.frame.size.width;
-    float th = self.frame.size.height;
-    for (NSArray *temp in pointData){
-        UIImageView *point = [temp objectAtIndex:0];
-        NSArray *localX = [temp objectAtIndex:1];
-        NSArray *localY = [temp objectAtIndex:2];
-        id tx = [localX objectAtIndex:currentFrame];
-        id ty = [localY objectAtIndex:currentFrame];
-        if ([tx isEqualToString:@"NaN"] || [ty isEqualToString:@"NaN"]){
-            [point setHidden:YES];
-        }else{
-            [point setHidden:NO];
-            [point setCenter:CGPointMake([tx floatValue] * tw,[ty floatValue] * th)];
-        }
-    }
-}
-
--(void)displayImage{
-    for (UISequenceViewCell *layerObj in self.subviews){
-        if ([layerObj isKindOfClass:[UISequenceViewCell class]]){
-            if (UISequenceViewQualityLow == quality){
-                if ([layerObj.cache.subviews count] > currentFrame){
-                    UIImageView *imageView = [layerObj.cache.subviews objectAtIndex:currentFrame];
-                    layerObj.image = imageView.image;
-                    layerObj.file = nil;
-                }
+    //
+    for (UIView *view in self.subviews){
+        if ([view isKindOfClass:[UISequenceViewCell class]]){
+            UISequenceViewCell *layerObj = (UISequenceViewCell*)view;
+            if (isTouche){
+                [layerObj.imageView setImage:[layerObj cacheAtFrame:currentFrame]];
             }else{
                 if (layerObj.path){
-                    NSString *path = [NSString stringWithFormat:layerObj.path,currentFrame]; 
+                    NSString *path = [NSString stringWithFormat:layerObj.path,currentFrame];
                     if (![path isEqualToString:layerObj.file]){
-                        layerObj.file = path;
-                        layerObj.image = [UIImage imageWithContentsOfFile:path];
+                        [layerObj.layer addAnimation:[CATransition animation] forKey:nil];
+                        [layerObj.imageView setImage:[UIImage imageWithContentsOfFile:path]];
+                        [layerObj setFile:path];
                     }
                 }
             }
         }
     }
 }
-
+-(void)setCurrentFrame:(int)value{
+    if (totalFrame > 0){
+        if (loop) {
+            currentFrame = value % totalFrame;
+            if (currentFrame < 0) currentFrame += totalFrame;
+        }else{
+            currentFrame = fmax(fmin(value,totalFrame-1),0); 
+        }
+    }
+}
+//拖动事件
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+    isTouche = YES;
+    [self.pointLayer setHidden:isTouche];
+}
+-(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
+    UITouch *touch = [touches anyObject];
+    CGPoint pre = [touch locationInView:self];
+    CGPoint nex = [touch previousLocationInView:self];
+    int mx = pre.x-nex.x;
+    int my = pre.y-nex.y;
+    if (mx!=0 && mx*mx>my*my){
+        if (mx>0) {
+            self.currentFrame++;
+        }else {
+            self.currentFrame--;
+        }
+        [self layoutSubviews];
+    }
+}
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
+    isTouche = NO;
+    [self.pointLayer setHidden:isTouche];
+    [self layoutSubviews];
+}
 @end

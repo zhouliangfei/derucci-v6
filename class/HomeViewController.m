@@ -185,12 +185,14 @@
     return UIInterfaceOrientationIsLandscape(interfaceOrientation);;
 }
 
--(void)viewDidAppear:(BOOL)animated{
+-(void)viewWillAppear:(BOOL)animated{
     [NavigateController shareInstanceInView:self.view];
     if ([GUIExt extendsView]) {
         [GUIExt extendsView].animationImages=[Access ExtendsImages];
     }
-    //
+}
+
+-(void)viewDidAppear:(BOOL)animated{
     if (currentCell) {
         [self performSelector:@selector(viewDidAppearDid:) withObject:currentCell afterDelay:0.4];
         currentCell = nil;
@@ -199,7 +201,6 @@
 -(void)viewDidAppearDid:(id)sender{
     [sender setActive:NO];
 }
-
 //.............................................................
 -(void)cellTouch:(HomeViewCell*)sender{
     if (sender.tag==6) return;

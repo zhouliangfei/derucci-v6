@@ -79,7 +79,8 @@
     return [formatter stringFromDate:self];
 }
 @end
-//
+
+//*****************************************************
 @implementation Utils
 
 +(NSString*)document{
@@ -241,19 +242,42 @@
 /*
  controller
  */
++(id)convertTransitionFrom:(NSString*)from{
+    NSArray *orientationList = [NSArray arrayWithObjects:kCATransitionFromTop,kCATransitionFromRight,kCATransitionFromBottom,kCATransitionFromLeft, nil];
+    NSUInteger index = [orientationList indexOfObject:from];
+    switch ([[Utils rootViewController] interfaceOrientation]){
+        case UIInterfaceOrientationLandscapeLeft:
+            index+=1;
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            index+=2;
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            index+=3;
+            break;
+        default:
+            break;
+    }
+    return [orientationList objectAtIndex:index%4];
+}
 +(UIViewController*)pushViewController:(UIViewController*)viewController animated:(UITransitionStyle)animated{
     switch (animated) {
         case UITransitionStyleDissolve:
             [[Utils rootViewController] pushViewController:viewController animated:NO];
             [[Utils rootViewController].view.layer addAnimation:[CATransition animation] forKey:nil];
             break;
-        case UITransitionStyleCoverVertical:
-            //XXXXXXXX
+        case UITransitionStyleCoverVertical:{
+            CATransition *animation = [CATransition animation];
+            [animation setSubtype:[Utils convertTransitionFrom:kCATransitionFromTop]];
+            [animation setType:kCATransitionPush];
+            //
             [[Utils rootViewController] pushViewController:viewController animated:NO];
-            [[Utils rootViewController].view.layer addAnimation:[CATransition animation] forKey:nil];
+            [[Utils rootViewController].view.window.layer addAnimation:animation forKey:nil];
+        }
             break;
-        case UITransitionStyleCoverHorizontal:
+        case UITransitionStyleCoverHorizontal:{
             [[Utils rootViewController] pushViewController:viewController animated:YES];
+        }
             break;
         default:
             [[Utils rootViewController] pushViewController:viewController animated:NO];
@@ -268,10 +292,14 @@
             [[Utils rootViewController] popToViewController:viewController animated:NO];
             [[Utils rootViewController].view.layer addAnimation:[CATransition animation] forKey:nil];
             break;
-        case UITransitionStyleCoverVertical:
-            //XXXXXXXX
+        case UITransitionStyleCoverVertical:{
+            CATransition *animation = [CATransition animation];
+            [animation setSubtype:[Utils convertTransitionFrom:kCATransitionFromBottom]];
+            [animation setType:kCATransitionPush];
+            //
             [[Utils rootViewController] popToViewController:viewController animated:NO];
-            [[Utils rootViewController].view.layer addAnimation:[CATransition animation] forKey:nil];
+            [[Utils rootViewController].view.window.layer addAnimation:animation forKey:nil];
+        }
             break;
         case UITransitionStyleCoverHorizontal:
             [[Utils rootViewController] popToViewController:viewController animated:YES];

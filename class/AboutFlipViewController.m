@@ -64,7 +64,7 @@
     return UIInterfaceOrientationIsLandscape(interfaceOrientation);
 }
 
--(void)viewDidAppear:(BOOL)animated{
+-(void)viewWillAppear:(BOOL)animated{
     [NavigateView shareInstanceInView:self.view];
     //
     if ([GUIExt extendsView]) {
@@ -86,7 +86,7 @@
     }
 }
 //代理
--(void)scrollViewDidScroll:(UIScrollView *)scrollView{
+-(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
     if (scrollView == bookView){
         int value = floor((bookView.contentOffset.x + bookView.frame.size.width * 0.5) / bookView.frame.size.width); 
         if (value != page){

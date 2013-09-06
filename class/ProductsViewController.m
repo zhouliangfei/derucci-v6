@@ -543,7 +543,7 @@
     return UIInterfaceOrientationIsLandscape(interfaceOrientation);
 }
 
--(void)viewDidAppear:(BOOL)animated{
+-(void)viewWillAppear:(BOOL)animated{
     NavigateView *nav = [NavigateView shareInstanceInView:self.view];
     [nav.background setHidden:YES];
     [self.view addSubview:topView];
@@ -662,7 +662,7 @@
 }
 //
 -(void)productTouch:(UIControl*)sender{
-    ProductViewController *product = (ProductViewController*)[Utils gotoWithName:@"ProductViewController" animated:UITransitionStyleCoverHorizontal];
+    ProductViewController *product = (ProductViewController*)[Utils gotoWithName:@"ProductViewController" animated:UITransitionStyleCoverVertical];
     product.style = currentPage;
     product.currentIndex = sender.tag-1;
     product.source = [[source objectAtIndex:currentPage] objectForKey:@"product"];

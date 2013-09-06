@@ -11,12 +11,20 @@
 @implementation NavigateController
 +(id)shareInstanceInView:(UIView*)view{
     static NavigateController *instance;
+    static UIImageView *instanceImage;
     @synchronized(self){
         if (nil == instance){
             instance = [[NavigateController alloc] initWithFrame:CGRectMake(900, 0, 124, 102)];
+            instanceImage = [[UIImageView alloc] initWithFrame:instance.frame];
+        }
+        if (instance.superview != view) {
+            if (nil != instance.superview) {
+                instanceImage.image = [instance convertImage];
+                [instance.superview addSubview:instanceImage];
+            }
+            [view addSubview:instance];
         }
     }
-    [view addSubview:instance];
     return instance;
 }
 - (id)initWithFrame:(CGRect)frame
@@ -113,13 +121,21 @@
 
 +(id)shareInstanceInView:(UIView*)view{
     static NavigateView *instance;
+    static UIImageView *instanceImage;
     @synchronized(self){
         if (nil == instance){
             instance = [[NavigateView alloc] initWithFrame:CGRectMake(0, 0, 1024, 75)];
+            instanceImage = [[UIImageView alloc] initWithFrame:instance.frame];
+        }
+        if (instance.superview != view) {
+            if (nil != instance.superview) {
+                instanceImage.image = [instance convertImage];
+                [instance.superview addSubview:instanceImage];
+            }
+            [instance.background setHidden:NO];
+            [view addSubview:instance];
         }
     }
-    [instance.background setHidden:NO];
-    [view addSubview:instance];
     [NavigateController shareInstanceInView:view];
     return instance;
 }

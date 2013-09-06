@@ -36,6 +36,7 @@
     [GUI imageWithFrame:CGRectMake(366, 110, 279, 34) parent:self.view source:@"source/virtual_title.png"];
     
     panoView = [GUI viewWithFrame:CGRectMake(0, -593, 1024, 593) parent:self.view];
+    [panoView setBackgroundColor:[UIColor blackColor]];
 
     bottomView = [GUI viewWithFrame:CGRectMake(0, 768, 1024, 175) parent:self.view];
     thumbView = [[UIFlipView alloc] initWithFrame:CGRectMake(21, 19, 660, 117)];
@@ -81,7 +82,7 @@
     return UIInterfaceOrientationIsLandscape(interfaceOrientation);
 }
 
--(void)viewDidAppear:(BOOL)animated{
+-(void)viewWillAppear:(BOOL)animated{
     NavigateView *nav = [NavigateView shareInstanceInView:self.view];
     [nav.background setHidden:YES];
     //

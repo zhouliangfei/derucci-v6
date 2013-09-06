@@ -38,6 +38,7 @@ typedef enum {
     UITransitionStyleCoverVertical,
     UITransitionStyleCoverHorizontal
 } UITransitionStyle;
+
 //*****************************************************
 @interface Utils : NSObject
 +(NSString*)document;

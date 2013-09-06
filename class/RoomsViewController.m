@@ -57,7 +57,7 @@
     return UIInterfaceOrientationIsLandscape(interfaceOrientation);
 }
 
--(void)viewDidAppear:(BOOL)animated{
+-(void)viewWillAppear:(BOOL)animated{
     NavigateView *nav = [NavigateView shareInstanceInView:self.view];
     [nav.background setHidden:YES];
     //
@@ -73,7 +73,7 @@
     }
     id val = [Access getRoomsWithId:[NSNumber numberWithInt:sender.tag]];
     if (val) {
-        RoomViewController *room = (RoomViewController*)[Utils gotoWithName:@"RoomViewController" animated:UITransitionStyleCoverHorizontal];
+        RoomViewController *room = (RoomViewController*)[Utils gotoWithName:@"RoomViewController" animated:UITransitionStyleCoverVertical];
         room.source = [val lastObject];
     }
 }

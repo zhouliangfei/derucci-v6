@@ -262,8 +262,10 @@
 {
     return UIInterfaceOrientationIsLandscape(interfaceOrientation);
 }
--(void)viewDidAppear:(BOOL)animated{
+-(void)viewWillAppear:(BOOL)animated{
     [NavigateView shareInstanceInView:self.view];
+}
+-(void)viewDidAppear:(BOOL)animated{
     if (source) {
         [self setStyle:[[source objectForKey:@"id"] intValue]-1];
         [self updataWall];
@@ -326,7 +328,6 @@
             });
         }
     }
-    
     [self updataProduct];
 }
 -(void)updataProduct{

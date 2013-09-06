@@ -102,7 +102,7 @@
     return UIInterfaceOrientationIsLandscape(interfaceOrientation);
 }
 
--(void)viewDidAppear:(BOOL)animated{
+-(void)viewWillAppear:(BOOL)animated{
     NavigateView *nav = [NavigateView shareInstanceInView:self.view];
     [nav.background setHidden:YES];
     //
@@ -153,7 +153,7 @@
 -(void)cellTouch:(AboutViewCell*)sender{
     id cur = [source objectAtIndex:sender.tag-1];
     if ([[cur objectForKey:@"fileType"] intValue]==0) {
-        AboutFlipViewController *book = (AboutFlipViewController*)[Utils gotoWithName:@"AboutFlipViewController" animated:UITransitionStyleCoverHorizontal];
+        AboutFlipViewController *book = (AboutFlipViewController*)[Utils gotoWithName:@"AboutFlipViewController" animated:UITransitionStyleCoverVertical];
         book.source = [Access getBrandstoryPictureWithId:[cur objectForKey:@"id"]];
     }else {
         [self showVideoWithPath:[Utils pathForDocument:[cur objectForKey:@"file"]]];

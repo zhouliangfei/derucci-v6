@@ -63,7 +63,7 @@
     return UIInterfaceOrientationIsLandscape(interfaceOrientation);
 }
 
--(void)viewDidAppear:(BOOL)animated{
+-(void)viewWillAppear:(BOOL)animated{
     NavigateView *nav = [NavigateView shareInstanceInView:self.view];
     [nav.background setHidden:YES];
     //
@@ -77,7 +77,7 @@
     if (sender.tag>1) {
         return;
     }
-    FeatureViewController *feature = (FeatureViewController*)[Utils gotoWithName:@"FeatureViewController" animated:UITransitionStyleCoverHorizontal];
+    FeatureViewController *feature = (FeatureViewController*)[Utils gotoWithName:@"FeatureViewController" animated:UITransitionStyleCoverVertical];
     feature.source = [source objectAtIndex:sender.tag-1];
 }
 @end

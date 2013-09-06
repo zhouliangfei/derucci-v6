@@ -167,9 +167,7 @@
 {
     return UIInterfaceOrientationIsLandscape(interfaceOrientation);
 }
--(void)viewDidAppear:(BOOL)animated{
-    [super viewDidAppear:animated];
-    //
+-(void)viewWillAppear:(BOOL)animated{
     if ([GUIExt extendsView]) {
         [GUIExt extendsView].animationImages=[Access ExtendsImages];
     }

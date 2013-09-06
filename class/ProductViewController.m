@@ -318,7 +318,7 @@
     return UIInterfaceOrientationIsLandscape(interfaceOrientation);
 }
 
--(void)viewDidAppear:(BOOL)animated{
+-(void)viewWillAppear:(BOOL)animated{
     [NavigateView shareInstanceInView:self.view];
     //
     if ([GUIExt extendsView]) {
